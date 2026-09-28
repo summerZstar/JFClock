@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.content.Context
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -72,7 +73,7 @@ class AlarmRingActivity : AppCompatActivity() {
                 vm.defaultVibrator
             } else {
                 @Suppress("DEPRECATION")
-                getSystemService(VIBRATOR_SERVICE) as Vibrator
+                getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             }
             val pattern = longArrayOf(0, 600, 400)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -99,7 +100,7 @@ class AlarmRingActivity : AppCompatActivity() {
     private fun snooze() {
         stopFeedback()
         // 5 分钟后再次触发，复用 AlarmReceiver
-        val am = getSystemService(ALARM_SERVICE) as android.app.AlarmManager
+        val am = getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
         val pi = android.app.PendingIntent.getBroadcast(
             this,
             9000 + alarmId.toInt(),
