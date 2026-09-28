@@ -3,20 +3,17 @@ package com.example.jfclock
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jfclock.databinding.ActivityMainBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,9 +36,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 强制浅色状态栏（深色图标），部分 OEM 不响应主题属性
-        WindowCompat.getInsetsController(window, window.decorView)
-            .isAppearanceLightStatusBars = true
+        applyStatusBarAppearance(this)
 
         // Android 13+ 需要运行时申请通知权限，否则全屏闹钟通知会被静默丢弃
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -76,35 +71,35 @@ class MainActivity : AppCompatActivity() {
         binding.btnEggTimer.setOnClickListener {
             startActivity(Intent(this, EggTimerActivity::class.java))
         }
+        binding.btnSettings.setOnClickListener {
+            startActivity(Intent(this, PermSettingsActivity::class.java))
+        }
+        binding.tvPermWarn.setOnClickListener {
+            startActivity(Intent(this, PermSettingsActivity::class.java))
+        }
 
         // 首次启动：引导用户开启后台响铃所需权限
         val guidePrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
         if (!guidePrefs.getBoolean("perm_guide_shown", false)) {
             guidePrefs.edit().putBoolean("perm_guide_shown", true).apply()
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.perm_guide_title)
                 .setMessage(R.string.perm_guide_msg)
                 .setPositiveButton(R.string.perm_guide_go) { _, _ ->
-                    try {
-                        startActivity(
-                            Intent(
-                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.parse("package:$packageName")
-                            )
-                        )
-                    } catch (_: Exception) {
-                    }
+                    startActivity(Intent(this, PermSettingsActivity::class.java))
                 }
                 .setNegativeButton(R.string.perm_guide_later, null)
                 .show()
         }
 
-        // 顶部时钟显示到秒
+        // 顶部时钟显示到秒；每分钟刷新「距离下次响铃」
         val timeFmt = SimpleDateFormat("HH:mm:ss", Locale.US)
+        var tick = 0
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 while (true) {
                     binding.tvClock.text = timeFmt.format(Date())
+                    if (++tick % 240 == 0) refreshNextRing(adapter.currentList)
                     delay(250)
                 }
             }
@@ -146,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.skip_once_fmt, dateText),
             getString(R.string.skip_disable)
         )
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.skip_dialog_title)
             .setItems(options) { _, which ->
                 lifecycleScope.launch {
@@ -161,8 +156,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton(R.string.action_cancel) { _, _ ->
-                // 用户取消：刷新列表让开关回到开启状态
-                binding.recycler.adapter?.notifyDataSetChanged()
+                // 用户取消：重绑该项让开关回到开启状态
+                val pos = adapter.currentList.indexOfFirst { it.id == alarm.id }
+                if (pos >= 0) adapter.notifyItemChanged(pos)
             }
             .show()
     }
@@ -175,6 +171,8 @@ class MainActivity : AppCompatActivity() {
                 AlarmScheduler.rescheduleAll(applicationContext, repo.getAll())
             }
         }
+        binding.tvPermWarn.visibility =
+            if (PermUtils.allKeyPermsGranted(applicationContext)) View.GONE else View.VISIBLE
     }
 
     private fun openEdit(alarm: Alarm?) {

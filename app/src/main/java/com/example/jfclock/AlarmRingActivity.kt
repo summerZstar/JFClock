@@ -117,7 +117,16 @@ class AlarmRingActivity : AppCompatActivity() {
             android.content.Intent(this, MainActivity::class.java),
             android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
         )
-        am.setAlarmClock(android.app.AlarmManager.AlarmClockInfo(triggerAt, show), pi)
+        // 与 AlarmScheduler 同样的降级策略：OEM 拒绝精确闹钟时不崩溃
+        try {
+            am.setAlarmClock(android.app.AlarmManager.AlarmClockInfo(triggerAt, show), pi)
+        } catch (e: SecurityException) {
+            try {
+                am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, triggerAt, pi)
+            } catch (_: SecurityException) {
+                am.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, triggerAt, pi)
+            }
+        }
         finish()
     }
 

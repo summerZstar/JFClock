@@ -1,25 +1,75 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/coloros_accent</item>
-        <item name="colorPrimaryDark">@color/coloros_accent_dark</item>
-        <item name="colorAccent">@color/coloros_accent</item>
-        <item name="android:windowBackground">@color/coloros_bg</item>
-        <item name="android:statusBarColor">@color/coloros_bg</item>
-        <item name="android:navigationBarColor">@color/coloros_bg</item>
-        <!-- 浅色状态栏背景 -> 使用深色图标/文字，避免白底白字 -->
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorPrimary">@color/light_accent</item>
+        <item name="colorPrimaryDark">@color/light_accent</item>
+        <item name="colorAccent">@color/light_accent</item>
+        <item name="android:windowBackground">@color/light_bg</item>
+        <item name="android:statusBarColor">@color/light_bg</item>
+        <item name="android:navigationBarColor">@color/light_bg</item>
+        <item name="android:textColorPrimary">@color/light_text_primary</item>
+        <item name="android:textColorSecondary">@color/light_text_secondary</item>
+        <item name="android:colorControlActivated">@color/light_accent</item>
+
+        <item name="appBg">@color/light_bg</item>
+        <item name="appCard">@color/light_card</item>
+        <item name="appTextPrimary">@color/light_text_primary</item>
+        <item name="appTextSecondary">@color/light_text_secondary</item>
+        <item name="appDivider">@color/light_divider</item>
+        <item name="appAccent">@color/light_accent</item>
+        <item name="appSwitchOff">@color/light_switch_off</item>
+        <item name="appIconTint">@color/light_icon</item>
+
+        <!-- 全局统一对话框样式：浅色/深色跟随主题，文字高对比 -->
+        <item name="materialAlertDialogTheme">@style/AppTheme.Dialog</item>
     </style>
 
+    <style name="AppTheme.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/light_accent</item>
+        <item name="alertDialogStyle">@style/AppTheme.Dialog.Style</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/AppTheme.Dialog.Title</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/AppTheme.Dialog.Body</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AppTheme.Dialog.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AppTheme.Dialog.Button</item>
+        <item name="buttonBarNeutralButtonStyle">@style/AppTheme.Dialog.Button</item>
+    </style>
+
+    <style name="AppTheme.Dialog.Style" parent="MaterialAlertDialog.Material3">
+        <item name="shapeAppearanceOverlay">@style/AppTheme.Dialog.Shape</item>
+        <item name="backgroundTint">@color/light_card</item>
+    </style>
+
+    <style name="AppTheme.Dialog.Shape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="AppTheme.Dialog.Title" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textColor">@color/light_text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTheme.Dialog.Body" parent="MaterialAlertDialog.Material3.Body.Text">
+        <item name="android:textColor">@color/light_text_primary</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+
+    <style name="AppTheme.Dialog.Button" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/light_accent</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- 响铃页：固定深色，不受系统深浅色影响 -->
     <style name="ThemeOverlay.Ring" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/coloros_ring_bg</item>
         <item name="android:statusBarColor">@color/coloros_ring_bg</item>
         <item name="android:navigationBarColor">@color/coloros_ring_bg</item>
-        <item name="colorPrimary">@color/coloros_accent</item>
+        <item name="colorPrimary">@color/light_accent</item>
+        <item name="materialAlertDialogTheme">@style/AppTheme.Dialog</item>
     </style>
 
     <style name="TitleText" parent="TextAppearance.Material3.HeadlineSmall">
-        <item name="android:textColor">@color/coloros_text_primary</item>
+        <item name="android:textColor">@color/light_text_primary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 

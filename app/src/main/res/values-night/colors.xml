@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 深色语义色板 -->
+    <color name="light_bg">#17191E</color>
+    <color name="light_card">#23262E</color>
+    <color name="light_text_primary">#F2F3F5</color>
+    <color name="light_text_secondary">#9AA0AC</color>
+    <color name="light_divider">#2E323B</color>
+    <color name="light_accent">#6FA0FF</color>
+    <color name="light_switch_off">#3A3F4A</color>
+    <color name="light_icon">#B8BDC7</color>
+</resources>

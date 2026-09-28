@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ColorOS inspired palette -->
-    <color name="coloros_accent">#FF6A3D</color>      <!-- warm orange -->
-    <color name="coloros_accent_dark">#E2552C</color>
-    <color name="coloros_switch_on">#00C26E</color>   <!-- OPPO green toggle -->
-    <color name="coloros_bg">#F4F5F7</color>
-    <color name="coloros_card">#FFFFFF</color>
-    <color name="coloros_text_primary">#1A1A1A</color>
-    <color name="coloros_text_secondary">#9A9CA1</color>
-    <color name="coloros_divider">#ECECEF</color>
+    <!-- 浅色语义色板（深色覆盖见 values-night/colors.xml） -->
+    <color name="light_bg">#F2F3F5</color>
+    <color name="light_card">#FFFFFF</color>
+    <color name="light_text_primary">#1A1A1A</color>
+    <color name="light_text_secondary">#8A8F99</color>
+    <color name="light_divider">#ECECEF</color>
+    <color name="light_accent">#1868F0</color>        <!-- ColorOS 风格蓝 -->
+    <color name="light_switch_off">#DADDE2</color>
+    <color name="light_icon">#5A5F6B</color>
+
+    <!-- 响铃页固定深色 -->
     <color name="coloros_ring_bg">#121417</color>
     <color name="coloros_ring_text">#FFFFFF</color>
+    <color name="coloros_ring_text_secondary">#B8BDC7</color>
+    <color name="coloros_ring_stroke">#4A4F58</color>
 </resources>

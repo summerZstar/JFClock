@@ -90,7 +90,7 @@ class AlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_clock)
             .setContentTitle("闹钟")
             .setContentText("闹钟时间到了")
@@ -98,8 +98,13 @@ class AlarmReceiver : BroadcastReceiver() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(fullScreenPi, true)
             .setAutoCancel(true)
-            .build()
 
-        nm.notify(reqCode, notification)
+        // Android 14+ 若未授予「全屏提醒」权限，全屏意图会被系统静默忽略：
+        // 附加「打开闹钟」动作，用户点按通知仍可进入响铃界面。
+        if (Build.VERSION.SDK_INT >= 34 && !PermUtils.isFullScreenIntentEnabled(context)) {
+            builder.addAction(R.drawable.ic_clock, "打开闹钟", fullScreenPi)
+        }
+
+        nm.notify(reqCode, builder.build())
     }
 }

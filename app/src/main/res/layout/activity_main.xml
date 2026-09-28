@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/coloros_bg">
+    android:background="@color/light_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +32,7 @@
                     android:text="@string/title_alarms"
                     android:textSize="30sp"
                     android:textStyle="bold"
-                    android:textColor="@color/coloros_text_primary" />
+                    android:textColor="@color/light_text_primary" />
 
                 <TextView
                     android:id="@+id/tvNextRing"
@@ -41,7 +41,7 @@
                     android:layout_marginTop="4dp"
                     android:visibility="gone"
                     android:textSize="14sp"
-                    android:textColor="@color/coloros_accent" />
+                    android:textColor="@color/light_accent" />
 
                 <TextView
                     android:id="@+id/tvClock"
@@ -51,7 +51,18 @@
                     android:text="00:00:00"
                     android:textSize="16sp"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/coloros_text_secondary" />
+                    android:textColor="@color/light_text_secondary" />
+
+                <TextView
+                    android:id="@+id/tvPermWarn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:text="@string/perm_warn"
+                    android:textSize="13sp"
+                    android:textColor="@color/light_accent"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -62,10 +73,20 @@
                 android:text="@string/egg_timer"
                 android:textSize="14sp"
                 app:cornerRadius="20dp"
-                app:strokeColor="@color/coloros_accent"
+                app:strokeColor="@color/light_accent"
                 app:strokeWidth="1dp"
-                app:iconTint="@color/coloros_accent"
-                android:textColor="@color/coloros_accent" />
+                app:iconTint="@color/light_accent"
+                android:textColor="@color/light_accent" />
+
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_settings"
+                android:tint="@color/light_icon"
+                android:contentDescription="@string/perm_settings_title" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -103,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="@string/empty_alarms"
-                    android:textColor="@color/coloros_text_secondary"
+                    android:textColor="@color/light_text_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
         </FrameLayout>
@@ -119,7 +140,7 @@
         android:layout_marginBottom="24dp"
         android:contentDescription="@string/new_alarm"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/coloros_accent"
+        app:backgroundTint="@color/light_accent"
         app:tint="@android:color/white"
         app:elevation="6dp" />
 

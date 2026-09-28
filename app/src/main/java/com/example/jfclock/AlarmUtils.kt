@@ -1,11 +1,22 @@
 package com.example.jfclock
 
+import android.app.Activity
+import android.content.res.Configuration
 import android.graphics.Paint
 import android.util.TypedValue
 import android.widget.EditText
 import android.widget.NumberPicker
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import java.util.Calendar
+
+/** 状态栏图标深浅色跟随系统深浅色（部分 OEM 不响应主题属性，需代码强制）。 */
+fun applyStatusBarAppearance(activity: Activity) {
+    val night = activity.resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+    WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+        .isAppearanceLightStatusBars = !night
+}
 
 /** 当天 00:00 的毫秒值，作为「每天/间隔」计算的基准日期。 */
 fun dayStartNow(): Long {
@@ -22,7 +33,7 @@ fun dayStartNow(): Long {
  * 统一 NumberPicker 样式：深色大号文字（部分 OEM 默认渲染成浅灰看不清）。
  */
 fun styleNumberPicker(picker: NumberPicker) {
-    val color = ContextCompat.getColor(picker.context, R.color.coloros_text_primary)
+    val color = ContextCompat.getColor(picker.context, R.color.light_text_primary)
     val sizePx = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_SP, 24f, picker.resources.displayMetrics
     )
