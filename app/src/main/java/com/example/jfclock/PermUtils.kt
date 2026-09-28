@@ -109,7 +109,8 @@ object PermUtils {
     /** Android 14+ 的「全屏提醒」授权页（系统设置里单独一项）。 */
     fun fullScreenIntentSettingsIntent(context: Context): Intent? {
         if (Build.VERSION.SDK_INT < 34) return null
-        return Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT)
+        // 用字面量而非 Settings 常量，避免不同 SDK 版本缺失常量导致编译失败
+        return Intent("android.settings.MANAGE_APP_USE_FULL_SCREEN_INTENT")
             .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }

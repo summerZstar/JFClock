@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_ALARM" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission
         android:name="android.permission.SCHEDULE_EXACT_ALARM"
@@ -67,7 +67,12 @@
         <service
             android:name=".RingService"
             android:exported="false"
-            android:foregroundServiceType="alarm" />
+            android:foregroundServiceType="specialUse">
+            <!-- Android 14 起前台服务必须声明类型；响铃属于闹钟场景，归入特殊用途 -->
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="alarm_ringing" />
+        </service>
 
         <receiver
             android:name=".EggReceiver"

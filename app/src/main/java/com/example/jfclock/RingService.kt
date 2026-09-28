@@ -86,8 +86,9 @@ class RingService : Service() {
             )
             .setOngoing(true)
             .build()
-        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_ALARM
+        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // Android 14 起 startForeground 必须带类型；闹钟响铃按特殊用途申报
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
         } else 0
         ServiceCompat.startForeground(this, FGS_NOTIFY_ID, notification, type)
     }
