@@ -3,6 +3,7 @@ package com.example.jfclock
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jfclock.databinding.ActivityMainBinding
@@ -19,6 +20,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // 强制浅色状态栏（深色图标），部分 OEM 不响应主题属性
+        WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = true
 
         adapter = AlarmAdapter(
             onToggle = { alarm, enabled ->
@@ -42,6 +47,16 @@ class MainActivity : AppCompatActivity() {
                 val hasItems = list.isNotEmpty()
                 binding.recycler.visibility = if (hasItems) android.view.View.VISIBLE else android.view.View.GONE
                 binding.emptyView.visibility = if (hasItems) android.view.View.GONE else android.view.View.VISIBLE
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 从系统授权页返回：若已授予精确闹钟权限，把所有闹钟重排为精确触发
+        if (AlarmScheduler.canScheduleExactAlarms(applicationContext)) {
+            lifecycleScope.launch {
+                AlarmScheduler.rescheduleAll(applicationContext, repo.getAll())
             }
         }
     }

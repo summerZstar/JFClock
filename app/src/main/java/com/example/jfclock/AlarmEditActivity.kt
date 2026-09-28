@@ -1,10 +1,14 @@
 package com.example.jfclock
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.NumberPicker
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.jfclock.databinding.ActivityAlarmEditBinding
 import kotlinx.coroutines.launch
@@ -30,6 +34,10 @@ class AlarmEditActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAlarmEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // 强制浅色状态栏（深色图标），部分 OEM 不响应主题属性
+        WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = true
 
         editingId = intent.getLongExtra("alarmId", -1L)
 
@@ -160,8 +168,29 @@ class AlarmEditActivity : AppCompatActivity() {
                 val id = repo.insert(alarm)
                 AlarmScheduler.schedule(applicationContext, alarm.copy(id = id))
             }
-            finish()
+            // 精确闹钟权限被系统拒绝时，引导用户去授权（闹钟仍会保存，只是可能略有延迟）
+            if (!AlarmScheduler.canScheduleExactAlarms(applicationContext)) {
+                promptExactAlarmPermission()
+            } else {
+                finish()
+            }
         }
+    }
+
+    private fun promptExactAlarmPermission() {
+        AlertDialog.Builder(this)
+            .setTitle("需要「闹钟和提醒」权限")
+            .setMessage("系统未授予精确闹钟权限，闹钟可能不准时响铃。\n点击「去授权」后在列表中允许本应用的「闹钟和提醒」。")
+            .setPositiveButton("去授权") { _, _ ->
+                try {
+                    startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                } catch (_: Exception) {
+                    // 部分机型无此设置页，忽略
+                }
+                finish()
+            }
+            .setNegativeButton("仍然保存") { _, _ -> finish() }
+            .show()
     }
 
     private fun delete() {
