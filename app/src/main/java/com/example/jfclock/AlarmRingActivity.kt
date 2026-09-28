@@ -26,6 +26,7 @@ class AlarmRingActivity : AppCompatActivity() {
     private var ringtone: Ringtone? = null
     private var vibrator: Vibrator? = null
     private var alarmId: Long = -1L
+    private var snoozeMinutes = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +54,8 @@ class AlarmRingActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val a = app.repository.getById(alarmId)
             binding.tvLabel.text = a?.label?.takeIf { it.isNotBlank() } ?: getString(R.string.ring_dismiss)
+            snoozeMinutes = a?.snoozeMinutes?.coerceIn(1, 30) ?: 5
+            binding.btnSnooze.text = getString(R.string.snooze_fmt, snoozeMinutes)
             startFeedback(a?.sound != false, a?.vibrate != false)
         }
 
@@ -107,7 +110,7 @@ class AlarmRingActivity : AppCompatActivity() {
             android.content.Intent(this, AlarmReceiver::class.java).putExtra("alarmId", alarmId),
             android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
         )
-        val triggerAt = System.currentTimeMillis() + 5 * 60 * 1000
+        val triggerAt = System.currentTimeMillis() + snoozeMinutes * 60 * 1000
         val show = android.app.PendingIntent.getActivity(
             this,
             9000 + alarmId.toInt() + 100000,

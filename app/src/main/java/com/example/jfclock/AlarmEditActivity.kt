@@ -107,6 +107,12 @@ class AlarmEditActivity : AppCompatActivity() {
     private fun setupOptions() {
         binding.swVibrate.isChecked = true
         binding.swSound.isChecked = true
+        // 稍后提醒：1~30 分钟，默认 5
+        binding.pickerSnooze.minValue = 1
+        binding.pickerSnooze.maxValue = 30
+        binding.pickerSnooze.value = 5
+        binding.pickerSnooze.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+        binding.pickerSnooze.wrapSelectorWheel = true
     }
 
     private fun load() {
@@ -117,6 +123,7 @@ class AlarmEditActivity : AppCompatActivity() {
             binding.etLabel.setText(a.label)
             binding.swVibrate.isChecked = a.vibrate
             binding.swSound.isChecked = a.sound
+            binding.pickerSnooze.value = a.snoozeMinutes.coerceIn(1, 30)
             when {
                 a.repeatType == -1 -> { binding.rbOnce.isChecked = true }
                 a.repeatType == 0 -> { binding.rbDaily.isChecked = true }
@@ -135,6 +142,7 @@ class AlarmEditActivity : AppCompatActivity() {
         val label = binding.etLabel.text.toString().trim()
         val vibrate = binding.swVibrate.isChecked
         val sound = binding.swSound.isChecked
+        val snooze = binding.pickerSnooze.value
         val anchor = dayStartNow()
 
         lifecycleScope.launch {
@@ -148,6 +156,7 @@ class AlarmEditActivity : AppCompatActivity() {
                         repeatType = repeatType,
                         vibrate = vibrate,
                         sound = sound,
+                        snoozeMinutes = snooze,
                         anchorTime = if (existing.anchorTime == 0L) anchor else existing.anchorTime
                     )
                     repo.update(updated)
@@ -163,7 +172,8 @@ class AlarmEditActivity : AppCompatActivity() {
                     anchorTime = anchor,
                     vibrate = vibrate,
                     sound = sound,
-                    createdAt = System.currentTimeMillis()
+                    createdAt = System.currentTimeMillis(),
+                    snoozeMinutes = snooze
                 )
                 val id = repo.insert(alarm)
                 AlarmScheduler.schedule(applicationContext, alarm.copy(id = id))

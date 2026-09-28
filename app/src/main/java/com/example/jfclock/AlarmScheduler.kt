@@ -38,12 +38,13 @@ object AlarmScheduler {
         return when {
             alarm.repeatType == -1 -> if (trigger > now) trigger else -1
             alarm.repeatType == 0 -> {
-                while (trigger <= now) trigger += DAY
+                // skipTime > 0 表示该次被「仅某日关闭一次」跳过
+                while (trigger <= now || (alarm.skipTime > 0 && trigger <= alarm.skipTime)) trigger += DAY
                 trigger
             }
             else -> {
                 val interval = alarm.repeatType.toLong() * DAY
-                while (trigger <= now) trigger += interval
+                while (trigger <= now || (alarm.skipTime > 0 && trigger <= alarm.skipTime)) trigger += interval
                 trigger
             }
         }

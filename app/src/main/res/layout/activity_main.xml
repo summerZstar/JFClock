@@ -10,17 +10,54 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:paddingStart="20dp"
             android:paddingTop="24dp"
             android:paddingEnd="20dp"
-            android:paddingBottom="12dp"
-            android:text="@string/title_alarms"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textColor="@color/coloros_text_primary" />
+            android:paddingBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_alarms"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/coloros_text_primary" />
+
+                <TextView
+                    android:id="@+id/tvClock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="00:00:00"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/coloros_text_secondary" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEggTimer"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/egg_timer"
+                android:textSize="14sp"
+                app:cornerRadius="20dp"
+                app:strokeColor="@color/coloros_accent"
+                app:strokeWidth="1dp"
+                app:iconTint="@color/coloros_accent"
+                android:textColor="@color/coloros_accent" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"

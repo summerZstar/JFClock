@@ -31,6 +31,10 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".EggTimerActivity"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
             android:name=".AlarmRingActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"

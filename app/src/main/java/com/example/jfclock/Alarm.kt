@@ -12,6 +12,8 @@ import androidx.room.PrimaryKey
  *  >0  -> 每隔 N 天（固定间隔天数），以 anchorTime 当天为起点
  *
  * anchorTime 为「间隔/每天」计算的基准日期（当天 00:00 的毫秒值）。
+ *
+ * skipTime：被「仅某日关闭一次」跳过的触发时间（毫秒），0 表示不跳过。
  */
 @Entity(tableName = "alarms")
 data class Alarm(
@@ -24,5 +26,7 @@ data class Alarm(
     val anchorTime: Long,
     val vibrate: Boolean,
     val sound: Boolean,
-    val createdAt: Long
+    val createdAt: Long,
+    val snoozeMinutes: Int = 5,
+    val skipTime: Long = 0
 )
