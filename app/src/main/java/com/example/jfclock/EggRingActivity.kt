@@ -81,11 +81,6 @@ class EggRingActivity : AppCompatActivity() {
         vibrator = null
     }
 
-    override fun onDestroy() {
-        stopFeedback()
-        super.onDestroy()
-    }
-
     private fun dismiss() {
         stopFeedback()
         EggStore.clear(this)
