@@ -35,6 +35,15 @@
                     android:textColor="@color/coloros_text_primary" />
 
                 <TextView
+                    android:id="@+id/tvNextRing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
+                    android:textSize="14sp"
+                    android:textColor="@color/coloros_accent" />
+
+                <TextView
                     android:id="@+id/tvClock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

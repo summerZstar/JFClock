@@ -2,8 +2,6 @@ package com.example.jfclock
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.os.Build
@@ -15,9 +13,9 @@ import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.jfclock.databinding.ActivityEggTimerBinding
@@ -27,8 +25,8 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 /**
- * 煮蛋计时器：预设不同熟度的煮蛋时长（长按预设可修改默认时间），
- * 点击开始倒计时，结束后响铃提醒。进入页面默认选中溏心蛋。
+ * 煮蛋计时器：预设不同熟度的煮蛋时长（点右上角设置图标可修改，支持分+秒），
+ * 点预设或拨滚轮选中后开始倒计时，结束后响铃提醒。进入页面默认选中溏心蛋。
  */
 class EggTimerActivity : AppCompatActivity() {
 
@@ -40,9 +38,10 @@ class EggTimerActivity : AppCompatActivity() {
     private var vibrator: Vibrator? = null
 
     private lateinit var prefs: SharedPreferences
-    private var softMin = 6
-    private var mediumMin = 8
-    private var hardMin = 10
+    private var softSec = 360
+    private var mediumSec = 480
+    private var hardSec = 600
+    private var curSeconds = 360L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,111 +52,145 @@ class EggTimerActivity : AppCompatActivity() {
             .isAppearanceLightStatusBars = true
 
         prefs = getSharedPreferences("egg_timer_prefs", Context.MODE_PRIVATE)
-        softMin = prefs.getInt("soft", 6)
-        mediumMin = prefs.getInt("medium", 8)
-        hardMin = prefs.getInt("hard", 10)
+        loadPresets()
+        curSeconds = softSec.toLong()
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.pickerMinutes.minValue = 1
         binding.pickerMinutes.maxValue = 30
-        binding.pickerMinutes.value = softMin
+        binding.pickerMinutes.value = (curSeconds / 60).toInt().coerceIn(1, 30)
         binding.pickerMinutes.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         binding.pickerMinutes.wrapSelectorWheel = true
         styleNumberPicker(binding.pickerMinutes)
 
-        binding.btnSoft.setOnClickListener { binding.pickerMinutes.value = softMin }
-        binding.btnMedium.setOnClickListener { binding.pickerMinutes.value = mediumMin }
-        binding.btnHard.setOnClickListener { binding.pickerMinutes.value = hardMin }
+        binding.btnSoft.setOnClickListener { selectPreset(softSec, R.string.egg_soft) }
+        binding.btnMedium.setOnClickListener { selectPreset(mediumSec, R.string.egg_medium) }
+        binding.btnHard.setOnClickListener { selectPreset(hardSec, R.string.egg_hard) }
+        binding.btnEditPresets.setOnClickListener { showPresetSettings() }
 
-        // 长按预设可修改它的默认时间（持久化保存）
-        binding.btnSoft.setOnLongClickListener { editPreset("soft", it as TextView); true }
-        binding.btnMedium.setOnLongClickListener { editPreset("medium", it as TextView); true }
-        binding.btnHard.setOnLongClickListener { editPreset("hard", it as TextView); true }
-
-        // 进入页面默认选中溏心蛋；拨动滚轮时同步高亮对应预设
-        updatePresetHighlight(softMin)
+        // 拨滚轮 = 自定义，取消预设选中态
         binding.pickerMinutes.setOnValueChangedListener { _, _, newVal ->
-            updatePresetHighlight(newVal)
-            if (!running) updateDisplay(newVal * 60_000L, newVal * 60_000L)
+            if (!running) {
+                curSeconds = newVal * 60L
+                uncheckAll()
+                binding.tvStatus.text = getString(R.string.egg_custom)
+                updateDisplay(curSeconds * 1000, curSeconds * 1000)
+            }
         }
+
+        binding.tvStatus.text = getString(R.string.egg_soft)
+        selectPreset(softSec, R.string.egg_soft)
 
         binding.btnStart.setOnClickListener { startTimer() }
         binding.btnStop.setOnClickListener { stopTimer(reset = true) }
     }
 
-    /** 高亮与当前分钟数一致的预设按钮：实心白字 = 选中，描边 = 未选中。 */
-    private fun updatePresetHighlight(minutes: Int) {
-        val accent = ContextCompat.getColor(this, R.color.coloros_accent)
-        val selected = mapOf(
-            binding.btnSoft to (minutes == softMin),
-            binding.btnMedium to (minutes == mediumMin),
-            binding.btnHard to (minutes == hardMin)
-        )
-        for ((btn, isSelected) in selected) {
-            if (isSelected) {
-                btn.backgroundTintList = ColorStateList.valueOf(accent)
-                btn.setTextColor(Color.WHITE)
-                btn.strokeColor = ColorStateList.valueOf(accent)
-            } else {
-                btn.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
-                btn.setTextColor(accent)
-                btn.strokeColor = ColorStateList.valueOf(accent)
-            }
-        }
+    private fun loadPresets() {
+        softSec = prefs.getInt("soft_s", 360)
+        mediumSec = prefs.getInt("medium_s", 480)
+        hardSec = prefs.getInt("hard_s", 600)
     }
 
-    /** 长按预设：弹窗修改该类型的默认分钟数并持久化。 */
-    private fun editPreset(key: String, btn: TextView) {
-        val current = when (key) {
-            "soft" -> softMin
-            "medium" -> mediumMin
-            else -> hardMin
-        }
+    private fun selectPreset(seconds: Int, nameRes: Int) {
+        curSeconds = seconds.toLong()
+        binding.btnSoft.isChecked = nameRes == R.string.egg_soft
+        binding.btnMedium.isChecked = nameRes == R.string.egg_medium
+        binding.btnHard.isChecked = nameRes == R.string.egg_hard
+        binding.tvStatus.text = getString(nameRes)
+        if (!running) updateDisplay(curSeconds * 1000, curSeconds * 1000)
+    }
+
+    private fun uncheckAll() {
+        binding.btnSoft.isChecked = false
+        binding.btnMedium.isChecked = false
+        binding.btnHard.isChecked = false
+    }
+
+    /** 预设设置对话框：每种类型可设置分钟 + 秒。 */
+    private fun showPresetSettings() {
         val container = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER
+            orientation = LinearLayout.VERTICAL
             setPadding(48, 24, 48, 0)
         }
-        val picker = NumberPicker(this).apply {
-            minValue = 1
-            maxValue = 30
-            value = current
-            wrapSelectorWheel = true
-        }
-        container.addView(picker)
-        container.addView(TextView(this).apply {
-            text = getString(R.string.unit_minutes)
-            textSize = 16f
-            setPadding(24, 0, 0, 0)
-        })
-        styleNumberPicker(picker)
+        val rows = listOf(
+            getString(R.string.egg_soft) to softSec,
+            getString(R.string.egg_medium) to mediumSec,
+            getString(R.string.egg_hard) to hardSec
+        ).map { (name, sec) -> buildPresetRow(container, name, sec) }
 
         AlertDialog.Builder(this)
-            .setTitle(getString(R.string.egg_edit_preset, btn.text))
+            .setTitle(R.string.egg_preset_settings)
             .setView(container)
             .setPositiveButton(R.string.action_save) { _, _ ->
-                val v = picker.value
-                prefs.edit().putInt(key, v).apply()
-                when (key) {
-                    "soft" -> softMin = v
-                    "medium" -> mediumMin = v
-                    else -> hardMin = v
+                val values = rows.map { (minPicker, secPicker) ->
+                    minPicker.value * 60 + secPicker.value
                 }
-                binding.pickerMinutes.value = v
-                updatePresetHighlight(v)
-                if (!running) updateDisplay(v * 60_000L, v * 60_000L)
+                if (values.any { it == 0 }) {
+                    Toast.makeText(this, R.string.egg_invalid, Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                prefs.edit()
+                    .putInt("soft_s", values[0])
+                    .putInt("medium_s", values[1])
+                    .putInt("hard_s", values[2])
+                    .apply()
+                loadPresets()
+                Toast.makeText(this, R.string.egg_saved, Toast.LENGTH_SHORT).show()
+                // 当前选中的预设若被修改，同步更新显示
+                when {
+                    binding.btnSoft.isChecked -> selectPreset(softSec, R.string.egg_soft)
+                    binding.btnMedium.isChecked -> selectPreset(mediumSec, R.string.egg_medium)
+                    binding.btnHard.isChecked -> selectPreset(hardSec, R.string.egg_hard)
+                }
             }
             .setNegativeButton(R.string.action_cancel, null)
             .show()
+    }
+
+    /** 构建一行「名称 + 分钟滚轮 + 秒滚轮」。返回分/秒两个 picker。 */
+    private fun buildPresetRow(
+        container: LinearLayout,
+        name: String,
+        initialSec: Int
+    ): Pair<NumberPicker, NumberPicker> {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, 16, 0, 16)
+        }
+        row.addView(TextView(this).apply {
+            text = name
+            textSize = 16f
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.2f)
+        })
+        val minPicker = NumberPicker(this).apply {
+            minValue = 0; maxValue = 59; value = initialSec / 60
+            wrapSelectorWheel = true
+        }
+        val secPicker = NumberPicker(this).apply {
+            minValue = 0; maxValue = 59; value = initialSec % 60
+            wrapSelectorWheel = true
+        }
+        row.addView(minPicker)
+        row.addView(TextView(this).apply {
+            text = getString(R.string.unit_minutes); textSize = 15f; setPadding(8, 0, 24, 0)
+        })
+        row.addView(secPicker)
+        row.addView(TextView(this).apply {
+            text = getString(R.string.unit_seconds); textSize = 15f; setPadding(8, 0, 0, 0)
+        })
+        container.addView(row)
+        styleNumberPicker(minPicker)
+        styleNumberPicker(secPicker)
+        return minPicker to secPicker
     }
 
     private fun startTimer() {
         if (running) return
         stopFeedback()
         running = true
-        totalMs = binding.pickerMinutes.value * 60_000L
-        binding.tvStatus.text = getString(R.string.egg_timer)
+        totalMs = curSeconds * 1000
         job = lifecycleScope.launch {
             var remaining = totalMs
             while (remaining > 0) {
@@ -176,9 +209,7 @@ class EggTimerActivity : AppCompatActivity() {
         running = false
         stopFeedback()
         if (reset) {
-            val total = binding.pickerMinutes.value * 60_000L
-            updateDisplay(total, total)
-            binding.tvStatus.text = getString(R.string.egg_custom)
+            updateDisplay(curSeconds * 1000, curSeconds * 1000)
         }
     }
 
@@ -196,7 +227,6 @@ class EggTimerActivity : AppCompatActivity() {
         running = false
         job = null
         binding.tvStatus.text = getString(R.string.egg_done)
-        // 响铃 + 震动提醒，点「停止」结束
         val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         ringtone = RingtoneManager.getRingtone(this, uri)

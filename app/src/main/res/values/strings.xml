@@ -17,6 +17,7 @@
     <string name="snooze_label">稍后提醒</string>
     <string name="snooze_fmt">稍后提醒 %1$d 分钟</string>
     <string name="unit_minutes">分钟</string>
+    <string name="unit_seconds">秒</string>
     <string name="skip_dialog_title">要关闭此重复闹钟吗？</string>
     <string name="skip_once_fmt">仅%1$s关闭一次</string>
     <string name="skip_disable">关闭此重复闹钟</string>
@@ -29,5 +30,13 @@
     <string name="egg_stop">停止</string>
     <string name="egg_done">蛋煮好了！</string>
     <string name="egg_custom">自定义（分钟）</string>
-    <string name="egg_edit_preset">修改「%1$s」的默认时间</string>
+    <string name="egg_presets_title">煮蛋时长预设</string>
+    <string name="egg_preset_settings">预设设置</string>
+    <string name="egg_saved">预设时间已保存</string>
+    <string name="egg_invalid">每项时间需大于 0</string>
+    <string name="next_ring_fmt">距离下次响铃还有 %1$s</string>
+    <string name="perm_guide_title">开启权限，闹钟才够准</string>
+    <string name="perm_guide_msg">为保证闹钟在锁屏和后台也能准点响铃，请开启：\n\n1. 通知权限\n2. 自启动 / 允许后台运行\n（OPPO 手机：设置 → 应用管理 → JFClock → 允许自启动；电池 → 允许后台运行）\n\n点击「去设置」跳转到应用信息页勾选。</string>
+    <string name="perm_guide_go">去设置</string>
+    <string name="perm_guide_later">稍后</string>
 </resources>

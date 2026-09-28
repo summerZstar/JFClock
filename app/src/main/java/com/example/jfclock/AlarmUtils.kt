@@ -34,16 +34,39 @@ fun styleNumberPicker(picker: NumberPicker) {
         }
     }
     try {
-        val f = NumberPicker::class.java.getDeclaredField("mSelectorWheelPaint")
-        f.isAccessible = true
-        (f.get(picker) as Paint).apply {
-            this.color = color
-            this.textSize = sizePx
+        // 遍历所有 Paint 字段，兼容不同 ROM 的字段命名（mSelectorWheelPaint 等）
+        for (f in NumberPicker::class.java.declaredFields) {
+            if (f.type == Paint::class.java) {
+                f.isAccessible = true
+                (f.get(picker) as? Paint)?.apply {
+                    this.color = color
+                    this.textSize = sizePx
+                }
+            }
         }
     } catch (_: Exception) {
-        // 不同 ROM 字段名可能不同，失败则保持默认
+        // 失败则保持默认
     }
     picker.invalidate()
+}
+
+/** 距离下次响铃的提示文案（毫秒差 -> 「X 小时 Y 分钟」）。 */
+fun formatDurationUntil(ms: Long): String {
+    val totalMin = (ms + 59999) / 60000
+    val h = totalMin / 60
+    val m = totalMin % 60
+    return when {
+        h > 0 -> "${h}小时${m}分钟"
+        m >= 1 -> "${m}分钟"
+        else -> "不足1分钟"
+    }
+}
+
+/** 煮蛋时长文案（秒 -> 「X分Y秒」）。 */
+fun formatEggDuration(sec: Int): String = when {
+    sec % 60 == 0 -> "${sec / 60}分钟"
+    sec < 60 -> "${sec}秒"
+    else -> "${sec / 60}分${sec % 60}秒"
 }
 
 /** 重复方式文案（ColorOS 风格）。 */

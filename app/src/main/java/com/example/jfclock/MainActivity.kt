@@ -3,8 +3,11 @@ package com.example.jfclock
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -74,6 +77,28 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, EggTimerActivity::class.java))
         }
 
+        // 首次启动：引导用户开启后台响铃所需权限
+        val guidePrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        if (!guidePrefs.getBoolean("perm_guide_shown", false)) {
+            guidePrefs.edit().putBoolean("perm_guide_shown", true).apply()
+            AlertDialog.Builder(this)
+                .setTitle(R.string.perm_guide_title)
+                .setMessage(R.string.perm_guide_msg)
+                .setPositiveButton(R.string.perm_guide_go) { _, _ ->
+                    try {
+                        startActivity(
+                            Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.parse("package:$packageName")
+                            )
+                        )
+                    } catch (_: Exception) {
+                    }
+                }
+                .setNegativeButton(R.string.perm_guide_later, null)
+                .show()
+        }
+
         // 顶部时钟显示到秒
         val timeFmt = SimpleDateFormat("HH:mm:ss", Locale.US)
         lifecycleScope.launch {
@@ -91,7 +116,24 @@ class MainActivity : AppCompatActivity() {
                 val hasItems = list.isNotEmpty()
                 binding.recycler.visibility = if (hasItems) android.view.View.VISIBLE else android.view.View.GONE
                 binding.emptyView.visibility = if (hasItems) android.view.View.GONE else android.view.View.VISIBLE
+                refreshNextRing(list)
             }
+        }
+    }
+
+    /** 顶部提示「距离下次响铃还有 X」（参考 ColorOS）。 */
+    private fun refreshNextRing(list: List<Alarm>) {
+        val next = list.filter { it.enabled }
+            .mapNotNull { AlarmScheduler.computeNextTrigger(it).takeIf { t -> t > 0 } }
+            .minOrNull()
+        if (next == null) {
+            binding.tvNextRing.visibility = View.GONE
+        } else {
+            binding.tvNextRing.visibility = View.VISIBLE
+            binding.tvNextRing.text = getString(
+                R.string.next_ring_fmt,
+                formatDurationUntil(next - System.currentTimeMillis())
+            )
         }
     }
 

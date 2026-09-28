@@ -160,6 +160,8 @@ class AlarmEditActivity : AppCompatActivity() {
                         vibrate = vibrate,
                         sound = sound,
                         snoozeMinutes = snooze,
+                        enabled = true,   // 编辑保存后自动启用
+                        skipTime = 0L,    // 主动编辑视为重新启用，清除「仅一次跳过」
                         anchorTime = if (existing.anchorTime == 0L) anchor else existing.anchorTime
                     )
                     repo.update(updated)

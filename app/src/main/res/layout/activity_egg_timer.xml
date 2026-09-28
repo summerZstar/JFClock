@@ -90,6 +90,32 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/egg_presets_title"
+                            android:textSize="14sp"
+                            android:textColor="@color/coloros_text_secondary" />
+
+                        <ImageButton
+                            android:id="@+id/btnEditPresets"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_settings"
+                            app:tint="@color/coloros_accent"
+                            android:contentDescription="@string/egg_preset_settings" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <com.google.android.material.button.MaterialButton
@@ -99,11 +125,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_margin="4dp"
+                            android:checkable="true"
                             android:text="@string/egg_soft"
                             android:textSize="13sp"
-                            android:textColor="@color/coloros_accent"
+                            android:textColor="@color/egg_preset_text"
+                            app:backgroundTint="@color/egg_preset_bg"
                             app:cornerRadius="20dp"
-                            app:strokeColor="@color/coloros_accent" />
+                            app:strokeColor="@color/coloros_accent"
+                            app:strokeWidth="1dp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnMedium"
@@ -112,11 +141,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_margin="4dp"
+                            android:checkable="true"
                             android:text="@string/egg_medium"
                             android:textSize="13sp"
-                            android:textColor="@color/coloros_accent"
+                            android:textColor="@color/egg_preset_text"
+                            app:backgroundTint="@color/egg_preset_bg"
                             app:cornerRadius="20dp"
-                            app:strokeColor="@color/coloros_accent" />
+                            app:strokeColor="@color/coloros_accent"
+                            app:strokeWidth="1dp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnHard"
@@ -125,11 +157,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_margin="4dp"
+                            android:checkable="true"
                             android:text="@string/egg_hard"
                             android:textSize="13sp"
-                            android:textColor="@color/coloros_accent"
+                            android:textColor="@color/egg_preset_text"
+                            app:backgroundTint="@color/egg_preset_bg"
                             app:cornerRadius="20dp"
-                            app:strokeColor="@color/coloros_accent" />
+                            app:strokeColor="@color/coloros_accent"
+                            app:strokeWidth="1dp" />
                     </LinearLayout>
 
                     <LinearLayout
