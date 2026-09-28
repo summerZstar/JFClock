@@ -69,7 +69,12 @@ object AlarmScheduler {
             Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        am.setAlarmClock(AlarmManager.AlarmClockInfo(next, showIntent), operation)
+        try {
+            am.setAlarmClock(AlarmManager.AlarmClockInfo(next, showIntent), operation)
+        } catch (t: Throwable) {
+            // 某些 OEM/系统版本在调度时可能抛异常，先记录堆栈、避免拖垮 App
+            reportCrash(context, t)
+        }
     }
 
     /** 取消单个闹钟。 */
