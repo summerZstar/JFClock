@@ -7,6 +7,8 @@
         <item name="android:windowBackground">@color/coloros_bg</item>
         <item name="android:statusBarColor">@color/coloros_bg</item>
         <item name="android:navigationBarColor">@color/coloros_bg</item>
+        <!-- 浅色状态栏背景 -> 使用深色图标/文字，避免白底白字 -->
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="ThemeOverlay.Ring" parent="Theme.Material3.DayNight.NoActionBar">
