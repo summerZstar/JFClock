@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repo.allAlarms.collectLatest { list ->
-                adapter.submit(list)
+                adapter.submitList(list)
                 val hasItems = list.isNotEmpty()
                 binding.recycler.visibility = if (hasItems) android.view.View.VISIBLE else android.view.View.GONE
                 binding.emptyView.visibility = if (hasItems) android.view.View.GONE else android.view.View.VISIBLE
