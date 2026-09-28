@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ColorOS inspired palette -->
+    <color name="coloros_accent">#FF6A3D</color>      <!-- warm orange -->
+    <color name="coloros_accent_dark">#E2552C</color>
+    <color name="coloros_switch_on">#00C26E</color>   <!-- OPPO green toggle -->
+    <color name="coloros_bg">#F4F5F7</color>
+    <color name="coloros_card">#FFFFFF</color>
+    <color name="coloros_text_primary">#1A1A1A</color>
+    <color name="coloros_text_secondary">#9A9CA1</color>
+    <color name="coloros_divider">#ECECEF</color>
+    <color name="coloros_ring_bg">#121417</color>
+    <color name="coloros_ring_text">#FFFFFF</color>
+</resources>

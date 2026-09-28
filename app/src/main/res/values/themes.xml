@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/coloros_accent</item>
+        <item name="colorPrimaryDark">@color/coloros_accent_dark</item>
+        <item name="colorAccent">@color/coloros_accent</item>
+        <item name="android:windowBackground">@color/coloros_bg</item>
+        <item name="android:statusBarColor">@color/coloros_bg</item>
+        <item name="android:navigationBarColor">@color/coloros_bg</item>
+    </style>
+
+    <style name="ThemeOverlay.Ring" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/coloros_ring_bg</item>
+        <item name="android:statusBarColor">@color/coloros_ring_bg</item>
+        <item name="android:navigationBarColor">@color/coloros_ring_bg</item>
+        <item name="colorPrimary">@color/coloros_accent</item>
+    </style>
+
+    <style name="TitleText" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/coloros_text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+</resources>
