@@ -1,6 +1,7 @@
 package com.example.jfclock
 
 import android.media.Ringtone
+import android.app.NotificationManager
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
@@ -56,11 +57,20 @@ class AlarmRingActivity : AppCompatActivity() {
             binding.tvLabel.text = a?.label?.takeIf { it.isNotBlank() } ?: getString(R.string.ring_dismiss)
             snoozeMinutes = a?.snoozeMinutes?.coerceIn(1, 30) ?: 5
             binding.btnSnooze.text = getString(R.string.snooze_fmt, snoozeMinutes)
-            startFeedback(a?.sound != false, a?.vibrate != false)
+            // 前台服务已在响铃时，界面不再重复播放
+            if (!RingService.ringing) startFeedback(a?.sound != false, a?.vibrate != false)
         }
 
         binding.btnDismiss.setOnClickListener { dismiss() }
         binding.btnSnooze.setOnClickListener { snooze() }
+    }
+
+    /** 用户已处理本次响铃：停服务、停本机播放、撤通知。 */
+    private fun finishRinging() {
+        stopFeedback()
+        RingService.stop(this)
+        getSystemService(NotificationManager::class.java)
+            .cancel(AlarmReceiver.notifyReqCode(alarmId))
     }
 
     private fun startFeedback(playSound: Boolean, doVibrate: Boolean) {
@@ -96,12 +106,12 @@ class AlarmRingActivity : AppCompatActivity() {
     }
 
     private fun dismiss() {
-        stopFeedback()
+        finishRinging()
         finish()
     }
 
     private fun snooze() {
-        stopFeedback()
+        finishRinging()
         // 5 分钟后再次触发，复用 AlarmReceiver
         val am = getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
         val pi = android.app.PendingIntent.getBroadcast(

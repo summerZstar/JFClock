@@ -26,13 +26,13 @@
     <string name="egg_soft">溏心</string>
     <string name="egg_medium">半熟</string>
     <string name="egg_hard">全熟</string>
-    <string name="egg_doneness_title">熟度（可点右上角调整基础时长）</string>
-    <string name="egg_size_title">鸡蛋大小</string>
-    <string name="egg_size_m">M蛋\n56-63g</string>
-    <string name="egg_size_l">L蛋\n64-70g</string>
-    <string name="egg_size_xl">XL蛋\n71-80g</string>
-    <string name="egg_fridge">冷藏蛋（冰箱刚取出）</string>
-    <string name="egg_fridge_desc">冷藏蛋更难煮透，自动加 30 秒</string>
+    <string name="egg_doneness_short">熟度</string>
+    <string name="egg_size_short">大小</string>
+    <string name="egg_size_m">M蛋</string>
+    <string name="egg_size_l">L蛋</string>
+    <string name="egg_size_xl">XL蛋</string>
+    <string name="egg_size_detail">M蛋 56–63g · L蛋 64–70g · XL蛋 71–80g</string>
+    <string name="egg_fridge">冷藏蛋（冰箱取出，自动加 30 秒）</string>
     <string name="egg_start">开始</string>
     <string name="egg_stop">停止</string>
     <string name="egg_done">蛋煮好了！</string>
@@ -40,9 +40,12 @@
     <string name="egg_done_tip">立刻捞出，放进冷水或冰水 3–5 分钟：\n停止继续加热，也更好剥壳</string>
     <string name="egg_extend_1min">延长 1 分钟</string>
     <string name="egg_channel_name">煮蛋计时</string>
-    <string name="egg_channel_desc">煮蛋结束提醒，锁屏与后台均可弹出</string>
+    <string name="egg_channel_audible">煮蛋响铃（兜底）</string>
     <string name="egg_custom">自定义</string>
-    <string name="egg_custom_desc">拨滚轮直接指定分钟（覆盖上方计算）</string>
+    <string name="egg_custom_row">自定义时长</string>
+    <string name="egg_custom_off">未启用</string>
+    <string name="egg_row_arrow">›</string>
+    <string name="egg_custom_dialog_title">自定义煮蛋时长</string>
     <string name="egg_preset_settings">熟度基础时长</string>
     <string name="egg_saved">基础时长已保存</string>
     <string name="egg_invalid">每项时间需大于 0</string>
@@ -50,10 +53,12 @@
     <string name="egg_finished">已响铃，点「停止」可重新计时</string>
     <string name="egg_calc_custom">自定义 %1$s</string>
     <string name="egg_guide_title">怎么煮更稳（沸水下锅）</string>
-    <string name="egg_guide_body">1. 水量要能没过鸡蛋，完全烧开后下锅\n2. 用勺子贴着水面轻放，减少裂壳\n3. 下蛋后转中火，全程保持微沸并开始计时\n4. 到点立刻捞出，冰水浴 3–5 分钟\n\n流心参考（室温蛋）：M蛋 6:00 · L蛋 6:30 · XL蛋 7:00\n\n锅具、火力、海拔都有差异，第一次建议试煮一个后微调；本计时器切到别的 App、锁屏或清理后台后也会准点响铃。</string>
+    <string name="egg_guide_expand">展开</string>
+    <string name="egg_guide_collapse">收起</string>
+    <string name="egg_guide_body">1. 水量要能没过鸡蛋，完全烧开后下锅\n2. 用勺子贴着水面轻放，减少裂壳\n3. 下蛋后转中火，全程保持微沸并开始计时\n4. 到点立刻捞出，冰水浴 3–5 分钟\n\n流心参考（室温蛋）：M蛋 6:00 · L蛋 6:30 · XL蛋 7:00；冷藏蛋各加 30 秒。\n\n锅具、火力、海拔都有差异，第一次建议试煮一个后微调。切到别的 App、锁屏或清理后台后也会准点响铃。</string>
     <string name="next_ring_fmt">距离下次响铃还有 %1$s</string>
     <string name="perm_guide_title">开启权限，闹钟才够准</string>
-    <string name="perm_guide_msg">为保证闹钟在锁屏和后台也能准点响铃，需要开启：\n\n1. 通知权限 + 全屏提醒\n2. 闹钟和提醒（精确闹钟）\n3. 自启动 / 允许后台运行（OPPO 手机必开）\n\n点击「去设置」打开应用内权限页，可逐项检查并直达系统设置。</string>
+    <string name="perm_guide_msg">为保证闹钟在锁屏和后台也能准点响铃，需要开启：\n\n1. 通知权限 + 全屏提醒\n2. 闹钟和提醒（精确闹钟）\n3. 后台弹出界面 / 显示在其他应用上层\n4. 自启动 / 允许后台运行（OPPO 手机必开）\n\n点击「去设置」打开应用内权限页，可逐项检查并直达系统设置。</string>
     <string name="perm_guide_go">去设置</string>
     <string name="perm_guide_later">稍后</string>
     <string name="settings">闹钟设置</string>
@@ -63,7 +68,9 @@
     <string name="perm_exact_title">闹钟和提醒（精确闹钟）</string>
     <string name="perm_exact_desc">允许系统准点唤醒，未开启时省电模式下可能延迟几分钟</string>
     <string name="perm_fs_title">全屏提醒</string>
-    <string name="perm_fs_desc">Android 14+ 需在通知设置中单独允许，否则响铃界面无法在锁屏弹出</string>
+    <string name="perm_fs_desc">Android 14+ 需单独允许，否则到点只有通知、不弹响铃界面。未开启时本项会显示「去开启」</string>
+    <string name="perm_overlay_title">后台弹出界面 / 显示在其他应用上层</string>
+    <string name="perm_overlay_desc">OPPO/一加/realme 常靠这项才能在锁屏和其他应用之上弹出响铃界面；开启后到点会直接弹屏</string>
     <string name="perm_dnd_title">勿扰模式下响铃</string>
     <string name="perm_dnd_desc">可选。开启后勿扰模式仍能正常响铃</string>
     <string name="perm_autostart_title">自启动 / 后台运行</string>
@@ -74,4 +81,9 @@
     <string name="perm_page_unavailable">未找到对应系统设置页，请手动前往：设置 → 应用 → JFClock</string>
     <string name="perm_all_ok">所需权限均已开启，闹钟可在后台/锁屏正常响铃</string>
     <string name="perm_warn">⚠ 部分权限未开启，后台/锁屏可能不响铃 · 点击处理</string>
+
+    <string name="ring_service_channel">响铃服务</string>
+    <string name="ring_service_title">正在响铃</string>
+    <string name="ring_open">打开闹钟</string>
+    <string name="egg_open_ring">查看煮蛋提醒</string>
 </resources>

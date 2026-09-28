@@ -23,17 +23,24 @@ object PermUtils {
     fun isExactAlarmEnabled(context: Context): Boolean =
         AlarmScheduler.canScheduleExactAlarms(context)
 
-    /** Android 14+ 全屏意图权限；隐藏 API 反射查询，失败时视为可用。 */
+    /**
+     * Android 14+ 全屏提醒是否可用。
+     *
+     * 用公开 API [NotificationManager.canUseFullScreenIntent]；早先靠反射隐藏方法，
+     * 反射失败会误报「已开启」，导致该给的兜底提示没给。
+     */
     fun isFullScreenIntentEnabled(context: Context): Boolean {
         if (Build.VERSION.SDK_INT < 34) return true
         return try {
-            val nm = context.getSystemService(NotificationManager::class.java)
-            val m = nm.javaClass.getMethod("isFullScreenIntentAllowed")
-            m.invoke(nm) as? Boolean ?: true
+            context.getSystemService(NotificationManager::class.java).canUseFullScreenIntent()
         } catch (_: Exception) {
-            true
+            false
         }
     }
+
+    /** 「显示在其他应用上层」：授予后应用可从后台直接拉起界面（OPPO 常靠这条）。 */
+    fun isOverlayEnabled(context: Context): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(context)
 
     fun isDndAccessEnabled(context: Context): Boolean {
         val nm = context.getSystemService(NotificationManager::class.java)
@@ -98,6 +105,39 @@ object PermUtils {
             .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
             .putExtra(Settings.EXTRA_CHANNEL_ID, AlarmReceiver.CHANNEL_ID)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+    /** Android 14+ 的「全屏提醒」授权页（系统设置里单独一项）。 */
+    fun fullScreenIntentSettingsIntent(context: Context): Intent? {
+        if (Build.VERSION.SDK_INT < 34) return null
+        return Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT)
+            .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+
+    /** 「显示在其他应用上层」授权页。 */
+    fun overlaySettingsIntent(context: Context): Intent? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return null
+        return Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:${context.packageName}")
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+
+    /** ColorOS「后台弹出界面」页候选组件（无公开 API，逐个尝试）。 */
+    fun oppoBackgroundPopupIntents(context: Context): List<Intent> = listOf(
+        Intent().setComponent(
+            ComponentName(
+                "com.coloros.safecenter",
+                "com.coloros.safecenter.permission.startup.floatwindow.FloatWindowListActivity"
+            )
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        Intent().setComponent(
+            ComponentName(
+                "com.oplus.safecenter",
+                "com.oplus.safecenter.permissionview.OplusPermissionListActivity"
+            )
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    )
 
     fun exactAlarmSettingsIntent(context: Context): Intent? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return null

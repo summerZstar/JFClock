@@ -37,7 +37,28 @@ class PermSettingsActivity : AppCompatActivity() {
             }))
         add(Item(R.string.perm_fs_title, R.string.perm_fs_desc,
             { if (Build.VERSION.SDK_INT >= 34) PermUtils.isFullScreenIntentEnabled(it) else true },
-            { PermUtils.open(it, PermUtils.channelSettingsIntent(it), PermUtils.notificationSettingsIntent(it)) }))
+            { c ->
+                val chain = listOfNotNull(
+                    PermUtils.fullScreenIntentSettingsIntent(c),
+                    PermUtils.channelSettingsIntent(c),
+                    PermUtils.notificationSettingsIntent(c),
+                    PermUtils.appDetailsIntent(c)
+                )
+                PermUtils.open(c, *chain.toTypedArray())
+            }))
+        add(Item(R.string.perm_overlay_title, R.string.perm_overlay_desc,
+            { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PermUtils.isOverlayEnabled(it) else true },
+            { c ->
+                val chain = if (PermUtils.isOppoFamily()) {
+                    PermUtils.oppoBackgroundPopupIntents(c) +
+                            listOfNotNull(PermUtils.overlaySettingsIntent(c)) +
+                            PermUtils.appDetailsIntent(c)
+                } else {
+                    listOfNotNull(PermUtils.overlaySettingsIntent(c)) +
+                            PermUtils.appDetailsIntent(c)
+                }
+                PermUtils.open(c, *chain.toTypedArray())
+            }))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             add(Item(R.string.perm_dnd_title, R.string.perm_dnd_desc,
                 { PermUtils.isDndAccessEnabled(it) },

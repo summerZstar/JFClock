@@ -3,6 +3,7 @@ package com.example.jfclock
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
@@ -20,8 +21,8 @@ import java.util.Locale
 /**
  * 煮蛋计时：熟度（溏心/半熟/全熟）× 大小（M/L/XL）+ 冷藏加成算出建议时长。
  *
- * 计时走 AlarmManager（EggScheduler），结束时刻按墙钟持久化，
- * 因此切到别的 App、锁屏、杀掉进程都能准点响，重进页面可恢复剩余时间。
+ * 计时走 AlarmManager（EggScheduler）+ 前台服务响铃（RingService），
+ * 结束时刻按墙钟持久化，因此切走、锁屏、杀进程都能准点响，重进可恢复。
  */
 class EggTimerActivity : AppCompatActivity() {
 
@@ -40,7 +41,7 @@ class EggTimerActivity : AppCompatActivity() {
     private var doneness = 0      // 0 溏心 / 1 半熟 / 2 全熟
     private var size = 0          // 0 M / 1 L / 2 XL
     private var fridge = false
-    private var customSec = 0     // > 0 表示用滚轮指定的分钟，忽略上方计算
+    private var customSec = 0     // > 0 表示用自定义时长，忽略上方计算
 
     private val donenessNames by lazy {
         listOf(getString(R.string.egg_soft), getString(R.string.egg_medium), getString(R.string.egg_hard))
@@ -48,6 +49,7 @@ class EggTimerActivity : AppCompatActivity() {
 
     companion object {
         private val SIZE_NAMES = listOf("M蛋", "L蛋", "XL蛋")
+        private val SIZE_DETAIL = listOf("56–63g", "64–70g", "71–80g")
         private val SIZE_OFFSETS = intArrayOf(0, 30, 60)
     }
 
@@ -65,17 +67,20 @@ class EggTimerActivity : AppCompatActivity() {
         doneness = prefs.getInt("doneness", 0).coerceIn(0, 2)
         size = prefs.getInt("size", 0).coerceIn(0, 2)
         fridge = prefs.getBoolean("fridge", false)
+        customSec = prefs.getInt("custom_s", 0)
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
         setupChips()
-        setupCustomPicker()
+        binding.swFridge.isChecked = fridge
         binding.swFridge.setOnCheckedChangeListener { _, checked ->
             fridge = checked
             prefs.edit().putBoolean("fridge", checked).apply()
             if (!running) recompute()
         }
         binding.btnEditPresets.setOnClickListener { showPresetSettings() }
+        binding.btnCustom.setOnClickListener { showCustomDialog() }
+        binding.btnGuide.setOnClickListener { toggleGuide() }
         binding.btnStart.setOnClickListener { startTimer() }
         binding.btnStop.setOnClickListener { stopTimer() }
 
@@ -90,7 +95,7 @@ class EggTimerActivity : AppCompatActivity() {
             btn.setOnClickListener {
                 size = index
                 customSec = 0
-                prefs.edit().putInt("size", index).apply()
+                prefs.edit().putInt("size", index).putInt("custom_s", 0).apply()
                 refreshChips()
                 if (!running) recompute()
             }
@@ -98,11 +103,11 @@ class EggTimerActivity : AppCompatActivity() {
         refreshChips()
     }
 
-    /** 点熟度会退出「自定义」模式。 */
+    /** 点熟度会退出「自定义」。 */
     private fun selectDoneness(index: Int) {
         doneness = index
         customSec = 0
-        prefs.edit().putInt("doneness", index).apply()
+        prefs.edit().putInt("doneness", index).putInt("custom_s", 0).apply()
         refreshChips()
         if (!running) recompute()
     }
@@ -115,22 +120,22 @@ class EggTimerActivity : AppCompatActivity() {
         binding.btnSizeM.isChecked = !custom && size == 0
         binding.btnSizeL.isChecked = !custom && size == 1
         binding.btnSizeXl.isChecked = !custom && size == 2
+        binding.tvCustomValue.text =
+            if (custom) formatEggDuration(customSec) else getString(R.string.egg_custom_off)
+        binding.tvCustomValue.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (custom) R.color.light_accent else R.color.light_text_primary
+            )
+        )
     }
 
-    private fun setupCustomPicker() {
-        binding.pickerMinutes.minValue = 1
-        binding.pickerMinutes.maxValue = 120
-        binding.pickerMinutes.value = 6
-        binding.pickerMinutes.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-        binding.pickerMinutes.wrapSelectorWheel = true
-        styleNumberPicker(binding.pickerMinutes)
-        binding.pickerMinutes.setOnValueChangedListener { _, _, newVal ->
-            if (!running) {
-                customSec = newVal * 60
-                refreshChips()
-                recompute()
-            }
-        }
+    private fun toggleGuide() {
+        val show = binding.tvGuideBody.visibility != View.VISIBLE
+        binding.tvGuideBody.visibility = if (show) View.VISIBLE else View.GONE
+        binding.tvGuideToggle.setText(
+            if (show) R.string.egg_guide_collapse else R.string.egg_guide_expand
+        )
     }
 
     private fun baseSeconds(): Int = when (doneness) {
@@ -145,7 +150,7 @@ class EggTimerActivity : AppCompatActivity() {
 
     private fun currentLabel(): String =
         "${if (customSec > 0) getString(R.string.egg_custom) else donenessNames[doneness]}" +
-                " · ${SIZE_NAMES[size]} · ${formatEggDuration(computedSeconds())}"
+                " · ${SIZE_NAMES[size]}(${SIZE_DETAIL[size]}) · ${formatEggDuration(computedSeconds())}"
 
     /** 刷新倒计时、当前配置与时长来源说明。 */
     private fun recompute() {
@@ -161,8 +166,7 @@ class EggTimerActivity : AppCompatActivity() {
             buildString {
                 append(donenessNames[doneness]).append(' ').append(formatEggDuration(baseSeconds()))
                 if (SIZE_OFFSETS[size] > 0) {
-                    append(" ＋ ").append(SIZE_NAMES[size]).append(' ')
-                    append(SIZE_OFFSETS[size]).append("秒")
+                    append(" ＋ ").append(SIZE_NAMES[size]).append(' ').append(SIZE_OFFSETS[size]).append("秒")
                 }
                 if (fridge) append(" ＋ 冷藏 30秒")
                 append(" ＝ ").append(formatEggDuration(total))
@@ -175,6 +179,7 @@ class EggTimerActivity : AppCompatActivity() {
         val pending = EggStore.runningEndAt(this)
         val finished = EggStore.finishedAt(this)
         refreshChips()
+        recompute()
         when {
             pending > 0 -> {
                 running = true
@@ -243,23 +248,50 @@ class EggTimerActivity : AppCompatActivity() {
         } else 0
     }
 
+    /** 自定义时长：分 + 秒两个滚轮；选 0 分 0 秒即清除自定义。 */
+    private fun showCustomDialog() {
+        val initial = if (customSec > 0) customSec else computedSeconds()
+        val (minPicker, secPicker) = buildTimePickers(initial)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.egg_custom_dialog_title)
+            .setView(wrapPickers(minPicker, secPicker))
+            .setPositiveButton(R.string.action_save) { _, _ ->
+                val sec = minPicker.value * 60 + secPicker.value
+                customSec = if (sec <= 0) 0 else sec.coerceAtMost(120 * 60)
+                prefs.edit().putInt("custom_s", customSec).apply()
+                refreshChips()
+                if (!running) recompute()
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
+    }
+
     /** 熟度基础时长设置：每种熟度分别设置分钟 + 秒（大小/冷藏在此基础上叠加）。 */
     private fun showPresetSettings() {
         val container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(48, 24, 48, 0)
         }
+        container.addView(TextView(this).apply {
+            text = getString(R.string.egg_size_detail)
+            textSize = 12f
+            setTextColor(ContextCompat.getColor(this@EggTimerActivity, R.color.light_text_secondary))
+            setPadding(0, 0, 0, 12)
+        })
         val rows = listOf(
             donenessNames[0] to softSec,
             donenessNames[1] to mediumSec,
             donenessNames[2] to hardSec
-        ).map { (name, sec) -> buildPresetRow(container, name, sec) }
+        ).map { (name, sec) -> name to buildTimePickers(sec).also { container.addView(wrapPickers(it.first, it.second, name)) } }
 
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.egg_preset_settings)
             .setView(container)
             .setPositiveButton(R.string.action_save) { _, _ ->
-                val values = rows.map { (minPicker, secPicker) -> minPicker.value * 60 + secPicker.value }
+                val values = rows.map { (name, pickers) ->
+                    val (minPicker, secPicker) = pickers
+                    minPicker.value * 60 + secPicker.value
+                }
                 if (values.any { it == 0 }) {
                     Toast.makeText(this, R.string.egg_invalid, Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
@@ -279,26 +311,9 @@ class EggTimerActivity : AppCompatActivity() {
             .show()
     }
 
-    /** 构建一行「名称 + 分钟滚轮 + 秒滚轮」。返回分/秒两个 picker。 */
-    private fun buildPresetRow(
-        container: LinearLayout,
-        name: String,
-        initialSec: Int
-    ): Pair<NumberPicker, NumberPicker> {
-        val row = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            setPadding(0, 16, 0, 16)
-        }
-        val textColor = ContextCompat.getColor(this, R.color.light_text_primary)
-        row.addView(TextView(this).apply {
-            text = name
-            textSize = 16f
-            setTextColor(textColor)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.2f)
-        })
+    private fun buildTimePickers(initialSec: Int): Pair<NumberPicker, NumberPicker> {
         val minPicker = NumberPicker(this).apply {
-            minValue = 0; maxValue = 59; value = initialSec / 60
+            minValue = 0; maxValue = 120; value = (initialSec / 60).coerceAtMost(120)
             wrapSelectorWheel = true
             descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         }
@@ -307,20 +322,43 @@ class EggTimerActivity : AppCompatActivity() {
             wrapSelectorWheel = true
             descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         }
-        row.addView(minPicker)
-        row.addView(TextView(this).apply {
-            text = getString(R.string.unit_minutes); textSize = 15f
-            setTextColor(textColor); setPadding(8, 0, 24, 0)
-        })
-        row.addView(secPicker)
-        row.addView(TextView(this).apply {
-            text = getString(R.string.unit_seconds); textSize = 15f
-            setTextColor(textColor); setPadding(8, 0, 0, 0)
-        })
-        container.addView(row)
         styleNumberPicker(minPicker)
         styleNumberPicker(secPicker)
         return minPicker to secPicker
+    }
+
+    /** 「名称 + 分滚轮 + 秒滚轮」一行；name 传 null 时只显示滚轮。 */
+    private fun wrapPickers(
+        minPicker: NumberPicker,
+        secPicker: NumberPicker,
+        name: String? = null
+    ): LinearLayout {
+        val textColor = ContextCompat.getColor(this, R.color.light_text_primary)
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, 12, 0, 12)
+            if (name != null) {
+                addView(TextView(this@EggTimerActivity).apply {
+                    text = name
+                    textSize = 16f
+                    setTextColor(textColor)
+                    layoutParams = LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.2f
+                    )
+                })
+            }
+            addView(minPicker)
+            addView(TextView(this@EggTimerActivity).apply {
+                text = context.getString(R.string.unit_minutes); textSize = 15f
+                setTextColor(textColor); setPadding(8, 0, 20, 0)
+            })
+            addView(secPicker)
+            addView(TextView(this@EggTimerActivity).apply {
+                text = context.getString(R.string.unit_seconds); textSize = 15f
+                setTextColor(textColor); setPadding(8, 0, 0, 0)
+            })
+        }
     }
 
     override fun onDestroy() {

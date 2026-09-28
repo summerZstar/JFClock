@@ -6,6 +6,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.CoroutineScope
@@ -15,16 +17,19 @@ import kotlinx.coroutines.launch
 /**
  * 闹钟触发广播。
  *
- * 关键点：Android 10+ 不允许从后台广播直接 startActivity 拉起界面
- *（锁屏/后台时活动弹不出来）。正确做法是发送一个【全屏意图通知】，
- * 由系统在锁屏/前台之上自动拉起 AlarmRingActivity。
- *
- * 同时仍直接 startActivity 一次（配合 singleTask，前台时更及时）。
+ * 响铃优先交给 [RingService]（前台服务能合法地后台拉起界面并持续播铃声）；
+ * 服务被系统拒绝时才退回「有声通知 + 全屏意图」，用户点通知进入响铃界面。
  */
 class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
-        const val CHANNEL_ID = "jfclock_alarm"
+        /** 全屏意图通道：高优先级但不发声，发声由服务负责，避免双份铃声。 */
+        const val CHANNEL_ID = "jfclock_alarm_fsi"
+        /** 服务起不来时用的有声通道。 */
+        const val AUDIBLE_CHANNEL_ID = "jfclock_alarm_ring"
+        private const val LEGACY_CHANNEL_ID = "jfclock_alarm"
+
+        fun notifyReqCode(id: Long): Int = (id + 7).toInt()
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -32,25 +37,33 @@ class AlarmReceiver : BroadcastReceiver() {
         if (id == -1L) return
 
         val app = context.applicationContext as JFClockApp
-
-        // 拉起响铃界面
-        val ringIntent = Intent(context, AlarmRingActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("alarmId", id)
-        }
-        try {
-            context.startActivity(ringIntent)
-        } catch (_: Exception) {
-        }
-
-        // 发送全屏意图通知（后台/锁屏也能弹出）
-        postFullScreenNotification(context, id, ringIntent)
-
-        // goAsync 保持接收器存活，确保重排程在进程被杀前完成
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
+            val alarm = try {
+                app.repository.getById(id)
+            } catch (_: Exception) {
+                null
+            }
+            val ringIntent = Intent(context, AlarmRingActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra("alarmId", id)
+            }
+            val serviceOk = RingService.start(
+                context,
+                RingService.KIND_ALARM,
+                id = id,
+                sound = alarm?.sound != false,
+                vibrate = alarm?.vibrate != false
+            )
+            if (!serviceOk) {
+                try {
+                    context.startActivity(ringIntent)
+                } catch (_: Exception) {
+                }
+            }
+            postNotification(context, id, ringIntent, audible = !serviceOk)
+
             try {
-                val alarm = app.repository.getById(id)
                 if (alarm != null && alarm.enabled) {
                     if (alarm.repeatType == -1) {
                         app.repository.update(alarm.copy(enabled = false))
@@ -63,34 +76,26 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun postFullScreenNotification(
+    private fun postNotification(
         context: Context,
         id: Long,
-        ringIntent: Intent
+        ringIntent: Intent,
+        audible: Boolean
     ) {
         val nm = context.getSystemService(NotificationManager::class.java)
+        val channel = if (audible) AUDIBLE_CHANNEL_ID else CHANNEL_ID
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "闹钟",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "闹钟响铃通知"
-                setBypassDnd(true)
-                lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
-            }
-            nm.createNotificationChannel(channel)
+            ensureChannels(nm)
         }
 
-        val reqCode = (id + 7).toInt()
+        val reqCode = notifyReqCode(id)
         val fullScreenPi = PendingIntent.getActivity(
             context,
             reqCode,
             ringIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_clock)
             .setContentTitle("闹钟")
             .setContentText("闹钟时间到了")
@@ -98,13 +103,47 @@ class AlarmReceiver : BroadcastReceiver() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(fullScreenPi, true)
             .setAutoCancel(true)
+            .setOngoing(true)
+            // 全屏提醒未授权时（Android 14+ 会静默忽略全屏意图），点这条动作即可进入
+            .addAction(R.drawable.ic_clock, context.getString(R.string.ring_open), fullScreenPi)
+            .build()
 
-        // Android 14+ 若未授予「全屏提醒」权限，全屏意图会被系统静默忽略：
-        // 附加「打开闹钟」动作，用户点按通知仍可进入响铃界面。
-        if (Build.VERSION.SDK_INT >= 34 && !PermUtils.isFullScreenIntentEnabled(context)) {
-            builder.addAction(R.drawable.ic_clock, "打开闹钟", fullScreenPi)
+        nm.notify(reqCode, notification)
+    }
+
+    private fun ensureChannels(nm: NotificationManager) {
+        nm.deleteNotificationChannel(LEGACY_CHANNEL_ID)
+
+        val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+
+        val fsi = NotificationChannel(
+            CHANNEL_ID,
+            "闹钟提醒",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "到点弹出响铃界面（声音由闹钟服务播放）"
+            setSound(null, null)
+            enableVibration(false)
+            setBypassDnd(true)
+            lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
         }
-
-        nm.notify(reqCode, builder.build())
+        val audible = NotificationChannel(
+            AUDIBLE_CHANNEL_ID,
+            "闹钟响铃（兜底）",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "后台无法启动响铃服务时，由通知直接发声"
+            alarmSound?.let { setSound(it, audioAttributes) }
+            vibrationPattern = longArrayOf(0, 600, 400)
+            enableVibration(true)
+            setBypassDnd(true)
+            lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
+        }
+        nm.createNotificationChannel(fsi)
+        nm.createNotificationChannel(audible)
     }
 }

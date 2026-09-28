@@ -68,8 +68,27 @@
         <item name="materialAlertDialogTheme">@style/AppTheme.Dialog</item>
     </style>
 
-    <style name="TitleText" parent="TextAppearance.Material3.HeadlineSmall">
-        <item name="android:textColor">@color/light_text_primary</item>
+    <!-- 煮蛋页的选择胶囊：单行、紧凑、选中填蓝 -->
+    <style name="EggChip" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_height">38dp</item>
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:checkable">true</item>
+        <item name="android:textColor">@color/egg_preset_text</item>
+        <item name="backgroundTint">@color/egg_preset_bg</item>
+        <item name="cornerRadius">19dp</item>
+        <item name="strokeColor">@color/light_accent</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="TitleText" parent="TextAppearance.Material3.HeadlineSmall">        <item name="android:textColor">@color/light_text_primary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 

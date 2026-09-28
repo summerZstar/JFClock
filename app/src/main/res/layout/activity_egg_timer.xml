@@ -26,7 +26,7 @@
             android:orientation="vertical"
             android:padding="12dp">
 
-            <!-- 倒计时显示 -->
+            <!-- 倒计时 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,53 +39,57 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="24dp">
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="16dp">
 
                     <TextView
                         android:id="@+id/tvCountdown"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="06:00"
-                        android:textSize="64sp"
+                        android:textSize="52sp"
                         android:textStyle="bold"
                         android:fontFamily="sans-serif-light"
+                        android:includeFontPadding="false"
                         android:textColor="@color/light_text_primary" />
 
                     <TextView
                         android:id="@+id/tvStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="4dp"
                         android:gravity="center"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textColor="@color/light_accent" />
 
                     <TextView
                         android:id="@+id/tvFormula"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:gravity="center"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         android:textColor="@color/light_text_secondary" />
 
                     <ProgressBar
                         android:id="@+id/progress"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_height="6dp"
+                        android:layout_marginTop="12dp"
                         android:max="1000"
                         android:progress="0"
                         android:progressTint="@color/light_accent" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 熟度 -->
+            <!-- 配置：熟度 / 大小 / 冷藏 / 自定义，合并成一张卡 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="@color/light_card">
@@ -94,213 +98,121 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="8dp">
+                    android:paddingStart="14dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
 
+                    <!-- 熟度 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="4dp">
+                        android:minHeight="46dp">
 
                         <TextView
-                            android:layout_width="0dp"
+                            android:layout_width="46dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/egg_doneness_title"
-                            android:textSize="14sp"
+                            android:text="@string/egg_doneness_short"
+                            android:textSize="13sp"
                             android:textColor="@color/light_text_secondary" />
-
-                        <ImageButton
-                            android:id="@+id/btnEditPresets"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_settings"
-                            android:tint="@color/light_icon"
-                            android:contentDescription="@string/egg_preset_settings" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnSoft"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            style="@style/EggChip"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:layout_margin="4dp"
-                            android:checkable="true"
-                            android:text="@string/egg_soft"
-                            android:textSize="13sp"
-                            android:textColor="@color/egg_preset_text"
-                            app:backgroundTint="@color/egg_preset_bg"
-                            app:cornerRadius="20dp"
-                            app:strokeColor="@color/light_accent"
-                            app:strokeWidth="1dp" />
+                            android:text="@string/egg_soft" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnMedium"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            style="@style/EggChip"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:layout_margin="4dp"
-                            android:checkable="true"
-                            android:text="@string/egg_medium"
-                            android:textSize="13sp"
-                            android:textColor="@color/egg_preset_text"
-                            app:backgroundTint="@color/egg_preset_bg"
-                            app:cornerRadius="20dp"
-                            app:strokeColor="@color/light_accent"
-                            app:strokeWidth="1dp" />
+                            android:text="@string/egg_medium" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnHard"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            style="@style/EggChip"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:layout_margin="4dp"
-                            android:checkable="true"
-                            android:text="@string/egg_hard"
-                            android:textSize="13sp"
-                            android:textColor="@color/egg_preset_text"
-                            app:backgroundTint="@color/egg_preset_bg"
-                            app:cornerRadius="20dp"
-                            app:strokeColor="@color/light_accent"
-                            app:strokeWidth="1dp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                            android:text="@string/egg_hard" />
 
-            <!-- 鸡蛋大小 + 冷藏 -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/light_card">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:text="@string/egg_size_title"
-                        android:textSize="14sp"
-                        android:textColor="@color/light_text_secondary" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnSizeM"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_margin="4dp"
-                            android:minHeight="64dp"
-                            android:checkable="true"
-                            android:text="@string/egg_size_m"
-                            android:textSize="12sp"
-                            android:lineSpacingExtra="2dp"
-                            android:textColor="@color/egg_preset_text"
-                            app:backgroundTint="@color/egg_preset_bg"
-                            app:cornerRadius="16dp"
-                            app:strokeColor="@color/light_accent"
-                            app:strokeWidth="1dp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnSizeL"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_margin="4dp"
-                            android:minHeight="64dp"
-                            android:checkable="true"
-                            android:text="@string/egg_size_l"
-                            android:textSize="12sp"
-                            android:lineSpacingExtra="2dp"
-                            android:textColor="@color/egg_preset_text"
-                            app:backgroundTint="@color/egg_preset_bg"
-                            app:cornerRadius="16dp"
-                            app:strokeColor="@color/light_accent"
-                            app:strokeWidth="1dp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnSizeXl"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_margin="4dp"
-                            android:minHeight="64dp"
-                            android:checkable="true"
-                            android:text="@string/egg_size_xl"
-                            android:textSize="12sp"
-                            android:lineSpacingExtra="2dp"
-                            android:textColor="@color/egg_preset_text"
-                            app:backgroundTint="@color/egg_preset_bg"
-                            app:cornerRadius="16dp"
-                            app:strokeColor="@color/light_accent"
-                            app:strokeWidth="1dp" />
+                        <ImageButton
+                            android:id="@+id/btnEditPresets"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_settings"
+                            android:scaleType="centerInside"
+                            android:tint="@color/light_icon"
+                            android:contentDescription="@string/egg_preset_settings" />
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginTop="4dp"
                         android:background="@color/light_divider" />
 
+                    <!-- 大小 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="8dp"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="12dp">
+                        android:gravity="center_vertical"
+                        android:minHeight="46dp">
 
-                        <LinearLayout
+                        <TextView
+                            android:layout_width="46dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/egg_size_short"
+                            android:textSize="13sp"
+                            android:textColor="@color/light_text_secondary" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSizeM"
+                            style="@style/EggChip"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/egg_size_m" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSizeL"
+                            style="@style/EggChip"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/egg_size_l" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSizeXl"
+                            style="@style/EggChip"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/egg_size_xl" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/light_divider" />
+
+                    <!-- 冷藏蛋 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:minHeight="46dp">
+
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/egg_fridge"
-                                android:textSize="16sp"
-                                android:textColor="@color/light_text_primary" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="@string/egg_fridge_desc"
-                                android:textSize="12sp"
-                                android:textColor="@color/light_text_secondary" />
-                        </LinearLayout>
+                            android:text="@string/egg_fridge"
+                            android:textSize="13sp"
+                            android:textColor="@color/light_text_secondary" />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/swFridge"
@@ -309,62 +221,45 @@
                             app:trackTint="@color/switch_track"
                             app:thumbTint="@color/switch_thumb" />
                     </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <!-- 自定义分钟 -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/light_card">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="12dp"
-                        android:text="@string/egg_custom"
-                        android:textSize="14sp"
-                        android:textColor="@color/light_text_secondary" />
-
-                    <TextView
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/egg_custom_desc"
-                        android:textSize="12sp"
-                        android:textColor="@color/light_text_secondary" />
+                        android:layout_height="1dp"
+                        android:background="@color/light_divider" />
 
+                    <!-- 自定义时长：点开对话框设定，替代原来的高滚轮 -->
                     <LinearLayout
+                        android:id="@+id/btnCustom"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp">
+                        android:gravity="center_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:minHeight="46dp">
 
-                        <NumberPicker
-                            android:id="@+id/pickerMinutes"
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/egg_custom_row"
+                            android:textSize="13sp"
+                            android:textColor="@color/light_text_secondary" />
+
+                        <TextView
+                            android:id="@+id/tvCustomValue"
                             android:layout_width="wrap_content"
-                            android:layout_height="110dp" />
+                            android:layout_height="wrap_content"
+                            android:text="@string/egg_custom_off"
+                            android:textSize="14sp"
+                            android:textColor="@color/light_text_primary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/unit_minutes"
-                            android:textSize="15sp"
-                            android:textColor="@color/light_text_primary" />
+                            android:layout_marginStart="4dp"
+                            android:text="@string/egg_row_arrow"
+                            android:textSize="14sp"
+                            android:textColor="@color/light_text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -374,38 +269,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="14dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnStart"
                     android:layout_width="0dp"
-                    android:layout_height="52dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="6dp"
                     android:text="@string/egg_start"
                     android:textSize="16sp"
                     android:backgroundTint="@color/light_accent"
-                    app:cornerRadius="26dp" />
+                    app:cornerRadius="25dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnStop"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="0dp"
-                    android:layout_height="52dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:layout_marginStart="6dp"
                     android:text="@string/egg_stop"
                     android:textSize="16sp"
                     android:textColor="@color/light_accent"
-                    app:cornerRadius="26dp"
+                    app:cornerRadius="25dp"
                     app:strokeColor="@color/light_accent" />
             </LinearLayout>
 
-            <!-- 煮蛋说明 -->
+            <!-- 煮法说明：默认折叠，不占首屏 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="14dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="@color/light_card">
@@ -413,25 +308,46 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/egg_guide_title"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/light_text_primary" />
-
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/btnGuide"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/egg_guide_title"
+                            android:textSize="15sp"
+                            android:textColor="@color/light_text_primary" />
+
+                        <TextView
+                            android:id="@+id/tvGuideToggle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/egg_guide_expand"
+                            android:textSize="13sp"
+                            android:textColor="@color/light_text_secondary" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvGuideBody"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="16dp"
                         android:lineSpacingExtra="4dp"
                         android:text="@string/egg_guide_body"
                         android:textSize="13sp"
-                        android:textColor="@color/light_text_secondary" />
+                        android:textColor="@color/light_text_secondary"
+                        android:visibility="gone" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

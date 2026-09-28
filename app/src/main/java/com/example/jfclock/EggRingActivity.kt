@@ -47,10 +47,17 @@ class EggRingActivity : AppCompatActivity() {
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = false
 
-        startFeedback()
+        if (!RingService.ringing) startFeedback()
 
         binding.btnDismiss.setOnClickListener { dismiss() }
         binding.btnExtend.setOnClickListener { extendOneMinute() }
+    }
+
+    /** 已处理本次响铃：停服务、停本机播放、撤通知。 */
+    private fun finishRinging() {
+        stopFeedback()
+        RingService.stop(this)
+        getSystemService(NotificationManager::class.java).cancel(EggReceiver.NOTIFY_ID)
     }
 
     private fun startFeedback() {
@@ -82,19 +89,17 @@ class EggRingActivity : AppCompatActivity() {
     }
 
     private fun dismiss() {
-        stopFeedback()
+        finishRinging()
         EggStore.clear(this)
-        getSystemService(NotificationManager::class.java).cancel(EggReceiver.NOTIFY_ID)
         finish()
     }
 
     /** 延长 1 分钟：重新排程并回到计时状态。 */
     private fun extendOneMinute() {
-        stopFeedback()
+        finishRinging()
         val endAt = System.currentTimeMillis() + 60_000L
         EggStore.save(this, endAt, 60_000L, label)
         EggScheduler.schedule(this, endAt, label)
-        getSystemService(NotificationManager::class.java).cancel(EggReceiver.NOTIFY_ID)
         finish()
     }
 
