@@ -23,9 +23,9 @@ jobs:
       - name: Install SDK packages & accept licenses
         run: |
           export ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}
-          SDK_BIN=$(ls "$ANDROID_HOME/cmdline-tools"/*/bin 2>/dev/null | head -n1)
-          echo "ANDROID_HOME=$ANDROID_HOME  SDK_BIN=$SDK_BIN"
-          export PATH="$SDK_BIN:$PATH"
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f 2>/dev/null | head -n1)
+          echo "ANDROID_HOME=$ANDROID_HOME  SDKMANAGER=$SDKMANAGER"
+          export PATH="$(dirname "$SDKMANAGER"):$PATH"
           sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
           yes | sdkmanager --licenses > /dev/null || true
 
