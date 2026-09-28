@@ -29,4 +29,5 @@
     <string name="egg_stop">停止</string>
     <string name="egg_done">蛋煮好了！</string>
     <string name="egg_custom">自定义（分钟）</string>
+    <string name="egg_edit_preset">修改「%1$s」的默认时间</string>
 </resources>

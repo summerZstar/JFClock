@@ -71,6 +71,8 @@ class AlarmEditActivity : AppCompatActivity() {
         // ColorOS 风格：不显示分隔线之间的文字选择框
         binding.pickerHour.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         binding.pickerMinute.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+        styleNumberPicker(binding.pickerHour)
+        styleNumberPicker(binding.pickerMinute)
     }
 
     private fun setupRepeat() {
@@ -113,6 +115,7 @@ class AlarmEditActivity : AppCompatActivity() {
         binding.pickerSnooze.value = 5
         binding.pickerSnooze.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         binding.pickerSnooze.wrapSelectorWheel = true
+        styleNumberPicker(binding.pickerSnooze)
     }
 
     private fun load() {

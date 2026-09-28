@@ -1,7 +1,11 @@
 package com.example.jfclock
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -23,6 +27,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: AlarmAdapter
     private val repo by lazy { (application as JFClockApp).repository }
 
+    private val notifPermLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* 拒绝也不影响前台响铃，仅影响全屏通知 */ }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -31,6 +39,13 @@ class MainActivity : AppCompatActivity() {
         // 强制浅色状态栏（深色图标），部分 OEM 不响应主题属性
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = true
+
+        // Android 13+ 需要运行时申请通知权限，否则全屏闹钟通知会被静默丢弃
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            notifPermLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
         adapter = AlarmAdapter(
             onToggle = { alarm, enabled ->

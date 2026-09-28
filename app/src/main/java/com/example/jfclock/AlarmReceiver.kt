@@ -38,19 +38,28 @@ class AlarmReceiver : BroadcastReceiver() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("alarmId", id)
         }
-        context.startActivity(ringIntent)
+        try {
+            context.startActivity(ringIntent)
+        } catch (_: Exception) {
+        }
 
         // 发送全屏意图通知（后台/锁屏也能弹出）
         postFullScreenNotification(context, id, ringIntent)
 
-        // 重新安排下一次触发；仅一次闹钟触发后关闭
+        // goAsync 保持接收器存活，确保重排程在进程被杀前完成
+        val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
-            val alarm = app.repository.getById(id) ?: return@launch
-            if (!alarm.enabled) return@launch
-            if (alarm.repeatType == -1) {
-                app.repository.update(alarm.copy(enabled = false))
+            try {
+                val alarm = app.repository.getById(id)
+                if (alarm != null && alarm.enabled) {
+                    if (alarm.repeatType == -1) {
+                        app.repository.update(alarm.copy(enabled = false))
+                    }
+                    AlarmScheduler.schedule(context.applicationContext, alarm)
+                }
+            } finally {
+                pendingResult.finish()
             }
-            AlarmScheduler.schedule(context.applicationContext, alarm)
         }
     }
 
