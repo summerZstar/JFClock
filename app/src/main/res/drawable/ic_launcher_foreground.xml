@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 时钟圆环（donut） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,22 a32,32 0 1,0 0,64 a32,32 0 1,0 0,-64 Z
+                           M54,31 a23,23 0 1,1 0,46 a23,23 0 1,1 0,-46 Z" />
+
+    <!-- 指针：分针（上）、时针（右上） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52,32 h4 v24 h-4 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,52 h24 v4 h-24 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M49,49 h10 v10 h-10 Z" />
+
+    <!-- 疾风：三道速度弧线，传达「疾风」意象 -->
+    <group
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000">
+        <path android:pathData="M82,46 q11,-7 19,1" />
+        <path android:pathData="M82,55 q13,-5 21,3" />
+        <path android:pathData="M82,64 q10,5 16,13" />
+    </group>
+</vector>
