@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12（API 31）及以上：卸载重装/换机迁移时要保留的数据。
+  卸载时系统会根据这里的规则把数据打包备份；重装后由系统自动恢复。
+  用户在卸载界面看到的「是否保留数据」由系统/厂商决定是否提供，
+  App 侧能做的就是把该保留的数据都声明进来。
+
+  覆盖：
+   - database：jfclock.db（闹钟 alarms + 计时器预设 timer_presets，含 -wal/-shm）
+   - sharedpref：所有计时状态与设置（倒计时/煮蛋/冰浴/番茄钟/秒表/权限引导/节假日缓存）
+   - file / external：其它本地小文件
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="database" path="." />
+        <include domain="sharedpref" path="." />
+        <include domain="file" path="." />
+        <include domain="external" path="." />
+    </cloud-backup>
+
+    <device-transfer>
+        <include domain="database" path="." />
+        <include domain="sharedpref" path="." />
+        <include domain="file" path="." />
+        <include domain="external" path="." />
+    </device-transfer>
+</data-extraction-rules>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/bg_timer_name"
+    android:foreground="?attr/selectableItemBackground"
+    android:paddingStart="14dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:minHeight="52dp">
+
+    <!-- 类型标识：定时开始=铃铛，普通倒计时=秒表 -->
+    <ImageView
+        android:id="@+id/ivPresetType"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_timer_countdown"
+        android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvPresetName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/light_text_primary"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/tvPresetSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:textSize="11sp"
+            android:textColor="@color/light_text_secondary"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvPresetDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textSize="14sp"
+        android:textColor="@color/light_text_secondary" />
+
+    <!-- 拖动手柄：按住它上下拖是排序，点/长按这一行还是套用与编辑 -->
+    <ImageView
+        android:id="@+id/ivDragHandle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="6dp"
+        android:padding="6dp"
+        android:src="@drawable/ic_drag_handle"
+        android:contentDescription="@string/timer_preset_drag_desc" />
+</LinearLayout>

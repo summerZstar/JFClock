@@ -39,23 +39,30 @@
                     android:gravity="center"
                     android:paddingTop="20dp"
                     android:paddingBottom="20dp">
-                    <NumberPicker
+                    <com.example.jfclock.WheelPicker
                         android:id="@+id/pickerHour"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp" />
+                        android:layout_marginEnd="4dp"
+                        app:wheelItemTextSize="28sp"
+                        app:wheelMaxValue="23"
+                        app:wheelMinValue="0"
+                        app:wheelVisibleCount="3" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=":"
-                        android:textSize="40sp"
-                        android:textStyle="bold"
+                        android:textSize="28sp"
                         android:textColor="@color/light_text_primary" />
-                    <NumberPicker
+                    <com.example.jfclock.WheelPicker
                         android:id="@+id/pickerMinute"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp" />
+                        android:layout_marginStart="4dp"
+                        app:wheelItemTextSize="28sp"
+                        app:wheelMaxValue="59"
+                        app:wheelMinValue="0"
+                        app:wheelVisibleCount="3" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -94,41 +101,125 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="8dp">
-                    <RadioGroup
-                        android:id="@+id/repeatGroup"
+                    <!-- 重复方式：一行摘要，点击弹出单选列表（子参数在下面按类型展开） -->
+                    <LinearLayout
+                        android:id="@+id/repeatRow"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/repeat_row_label"
+                            android:textSize="16sp"
+                            android:textColor="@color/light_text_primary" />
+                        <TextView
+                            android:id="@+id/tvRepeatSummary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/light_accent" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/egg_row_arrow"
+                            android:textSize="14sp"
+                            android:textColor="@color/light_text_secondary" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/light_divider" />
+
+                    <!-- 起始日期：间隔从这天数起；每月/每年取这天的号数；仅一次就是这天响 -->
+                    <LinearLayout
+                        android:id="@+id/anchorLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:visibility="gone">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/repeat_anchor_label"
+                            android:textSize="16sp"
+                            android:textColor="@color/light_text_primary" />
+                        <TextView
+                            android:id="@+id/tvAnchorDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/light_accent" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/egg_row_arrow"
+                            android:textSize="14sp"
+                            android:textColor="@color/light_text_secondary" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvAnchorHint"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <RadioButton
-                            android:id="@+id/rbOnce"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:gravity="center_vertical"
-                            android:paddingStart="12dp"
-                            android:text="@string/repeat_once"
-                            android:textSize="16sp"
-                            android:textColor="@color/light_text_primary" />
-                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/light_divider" />
-                        <RadioButton
-                            android:id="@+id/rbDaily"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:gravity="center_vertical"
-                            android:paddingStart="12dp"
-                            android:text="@string/repeat_daily"
-                            android:textSize="16sp"
-                            android:textColor="@color/light_text_primary" />
-                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/light_divider" />
-                        <RadioButton
-                            android:id="@+id/rbInterval"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:gravity="center_vertical"
-                            android:paddingStart="12dp"
-                            android:text="@string/repeat_interval"
-                            android:textSize="16sp"
-                            android:textColor="@color/light_text_primary" />
-                    </RadioGroup>
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="8dp"
+                        android:textSize="12sp"
+                        android:textColor="@color/light_text_secondary"
+                        android:visibility="gone" />
+                    <!-- 工作日闹钟：说明节假日数据是否已同步 -->
+                    <TextView
+                        android:id="@+id/tvWorkdayTip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="8dp"
+                        android:textSize="12sp"
+                        android:textColor="@color/light_accent"
+                        android:visibility="gone" />
+
+                    <!-- 自定义：选中的星期各响一次；等分七个槽位保证各屏宽下圆钮都是正圆 -->
+                    <LinearLayout
+                        android:id="@+id/weekdayLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="12dp"
+                        android:visibility="gone">
+                        <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <TextView android:id="@+id/wd1" style="@style/WeekdayCircle" />
+                        </FrameLayout>
+                        <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <TextView android:id="@+id/wd2" style="@style/WeekdayCircle" />
+                        </FrameLayout>
+                        <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <TextView android:id="@+id/wd3" style="@style/WeekdayCircle" />
+                        </FrameLayout>
+                        <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <TextView android:id="@+id/wd4" style="@style/WeekdayCircle" />
+                        </FrameLayout>
+                        <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <TextView android:id="@+id/wd5" style="@style/WeekdayCircle" />
+                        </FrameLayout>
+                        <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <TextView android:id="@+id/wd6" style="@style/WeekdayCircle" />
+                        </FrameLayout>
+                        <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+                            <TextView android:id="@+id/wd7" style="@style/WeekdayCircle" />
+                        </FrameLayout>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/intervalLayout"
@@ -142,41 +233,36 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="每"
+                            android:text="@string/repeat_interval_prefix"
                             android:textSize="16sp"
                             android:textColor="@color/light_text_primary" />
-                        <ImageButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnMinus"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            style="@style/TimerStepButton"
                             android:layout_marginStart="12dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@android:drawable/ic_media_previous"
-                            android:tint="@color/light_accent"
-                            android:contentDescription="-" />
+                            android:contentDescription="@string/repeat_interval_minus"
+                            android:text="@string/repeat_interval_minus" />
                         <TextView
                             android:id="@+id/tvInterval"
                             android:layout_width="48dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
                             android:gravity="center"
                             android:text="2"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="@color/light_accent" />
-                        <ImageButton
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnPlus"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            style="@style/TimerStepButton"
                             android:layout_marginStart="4dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@android:drawable/ic_media_next"
-                            android:tint="@color/light_accent"
-                            android:contentDescription="+" />
+                            android:contentDescription="@string/repeat_interval_plus"
+                            android:text="@string/repeat_interval_plus" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="天"
+                            android:text="@string/repeat_interval_suffix"
                             android:textSize="16sp"
                             android:textColor="@color/light_text_primary" />
                     </LinearLayout>
@@ -241,6 +327,71 @@
                             app:thumbTint="@color/switch_thumb" />
                     </LinearLayout>
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/light_divider" />
+                    <!-- 增强提醒：铃声渐强 + 震动加强 + 需长按关闭 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="8dp"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/alarm_intense_title"
+                                android:textSize="16sp"
+                                android:textColor="@color/light_text_primary" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/alarm_intense_desc"
+                                android:textSize="12sp"
+                                android:textColor="@color/light_text_secondary" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/swIntense"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:trackTint="@color/switch_track"
+                            app:thumbTint="@color/switch_thumb" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/light_divider" />
+                    <!-- 特殊提醒：响铃时大字显示这句话 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:orientation="vertical"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/alarm_note_title"
+                            android:textSize="16sp"
+                            android:textColor="@color/light_text_primary" />
+                        <EditText
+                            android:id="@+id/etNote"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:background="@null"
+                            android:hint="@string/alarm_note_hint"
+                            android:textSize="14sp"
+                            android:inputType="text"
+                            android:textColor="@color/light_accent" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/light_divider" />
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -257,10 +408,15 @@
                             android:textSize="16sp"
                             android:textColor="@color/light_text_primary" />
 
-                        <NumberPicker
+                        <com.example.jfclock.WheelPicker
                             android:id="@+id/pickerSnooze"
                             android:layout_width="wrap_content"
-                            android:layout_height="90dp" />
+                            android:layout_height="wrap_content"
+                            app:wheelItemTextSize="18sp"
+                            app:wheelMaxValue="30"
+                            app:wheelMinValue="1"
+                            app:wheelValue="5"
+                            app:wheelVisibleCount="3" />
 
                         <TextView
                             android:layout_width="wrap_content"

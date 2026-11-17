@@ -7,6 +7,9 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -15,8 +18,16 @@ class JFClockApp : Application() {
     val database by lazy { AlarmDatabase.get(this) }
     val repository by lazy { AlarmRepository(database.alarmDao()) }
 
+    /**
+     * 进程级协程作用域：响铃页点「稍后提醒」后立刻 finish，
+     * 用 lifecycleScope 写库会被连同取消，延后状态就丢了。
+     */
+    val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     override fun onCreate() {
         super.onCreate()
+        // 工作日闹钟要在计算下次触发前就能判定，先装载本地缓存的节假日数据
+        WorkdayCalendar.init(this)
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             reportCrash(applicationContext, throwable)

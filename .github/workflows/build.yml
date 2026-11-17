@@ -46,8 +46,19 @@ jobs:
           unzip -q gradle-${GRADLE_VER}-bin.zip -d "$HOME/gradle"
           echo "$HOME/gradle/gradle-${GRADLE_VER}/bin" >> "$GITHUB_PATH"
 
+      - name: Run unit tests (core time calc + Room migration)
+        run: gradle testDebugUnitTest --no-daemon --stacktrace
+
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: app/build/reports/tests
+          if-no-files-found: ignore
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

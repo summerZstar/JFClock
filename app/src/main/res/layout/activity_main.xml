@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- 标题行：当前时间和「闹钟」同一行，右侧留设置入口 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -18,13 +19,13 @@
             android:paddingStart="20dp"
             android:paddingTop="24dp"
             android:paddingEnd="20dp"
-            android:paddingBottom="12dp">
+            android:paddingBottom="4dp">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -35,48 +36,15 @@
                     android:textColor="@color/light_text_primary" />
 
                 <TextView
-                    android:id="@+id/tvNextRing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:visibility="gone"
-                    android:textSize="14sp"
-                    android:textColor="@color/light_accent" />
-
-                <TextView
                     android:id="@+id/tvClock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="10dp"
                     android:text="00:00:00"
                     android:textSize="16sp"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/light_text_secondary" />
-
-                <TextView
-                    android:id="@+id/tvPermWarn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:text="@string/perm_warn"
-                    android:textSize="13sp"
-                    android:textColor="@color/light_accent"
-                    android:visibility="gone" />
             </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEggTimer"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/egg_timer"
-                android:textSize="14sp"
-                app:cornerRadius="20dp"
-                app:strokeColor="@color/light_accent"
-                app:strokeWidth="1dp"
-                app:iconTint="@color/light_accent"
-                android:textColor="@color/light_accent" />
 
             <ImageButton
                 android:id="@+id/btnSettings"
@@ -89,15 +57,41 @@
                 android:contentDescription="@string/perm_settings_title" />
         </LinearLayout>
 
+        <!-- 提醒：所有闹钟里最近的一次触发时刻（没有开启的闹钟时整行隐藏） -->
+        <TextView
+            android:id="@+id/tvReminder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="4dp"
+            android:textSize="13sp"
+            android:textColor="@color/light_text_secondary"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvPermWarn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="6dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/perm_warn"
+            android:textSize="13sp"
+            android:textColor="@color/light_accent"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_marginTop="6dp"
             android:clipToPadding="false"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:paddingBottom="96dp"
+            android:paddingBottom="148dp"
             android:scrollbars="vertical" />
 
         <FrameLayout
@@ -129,18 +123,30 @@
             </LinearLayout>
         </FrameLayout>
 
+        <!-- 功能入口固定在底部（原来的顶部胶囊改成 tab） -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_card"
+            app:labelVisibilityMode="labeled"
+            app:itemIconTint="@color/nav_item_tint"
+            app:itemTextColor="@color/nav_item_tint"
+            app:menu="@menu/menu_main_tabs" />
+
     </LinearLayout>
 
+    <!-- 新增闹钟：正圆按钮，悬浮在底部 tab 之上、水平居中 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="24dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="92dp"
         android:contentDescription="@string/new_alarm"
         android:src="@drawable/ic_add"
         app:backgroundTint="@color/light_accent"
+        app:shapeAppearanceOverlay="@style/FabCircle"
         app:tint="@android:color/white"
         app:elevation="6dp" />
 

@@ -28,6 +28,13 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
+
+    testOptions {
+        unitTests {
+            // Robolectric 需要访问合并后的资源与 Manifest
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -44,4 +51,9 @@ dependencies {
     implementation "androidx.room:room-runtime:2.6.1"
     implementation "androidx.room:room-ktx:2.6.1"
     kapt "androidx.room:room-compiler:2.6.1"
+
+    // 单元测试：JUnit + Robolectric（JVM 上跑 Room 迁移与依赖 Context 的逻辑）
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.11.1'
+    testImplementation 'androidx.test:core:1.5.0'
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 首页固定底部 tab：闹钟（本页）+ 四个计时类功能入口 -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tabAlarm"
+        android:icon="@drawable/ic_tab_alarm"
+        android:title="@string/title_alarms" />
+    <item
+        android:id="@+id/tabEggTimer"
+        android:icon="@drawable/ic_tab_egg"
+        android:title="@string/tab_egg" />
+    <item
+        android:id="@+id/tabPomodoro"
+        android:icon="@drawable/ic_tab_pomodoro"
+        android:title="@string/tab_pomodoro" />
+    <item
+        android:id="@+id/tabTimer"
+        android:icon="@drawable/ic_tab_timer"
+        android:title="@string/timer_title" />
+    <item
+        android:id="@+id/tabStopwatch"
+        android:icon="@drawable/ic_tab_stopwatch"
+        android:title="@string/sw_title" />
+</menu>

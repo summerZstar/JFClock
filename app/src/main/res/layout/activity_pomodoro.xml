@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/light_bg">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/light_bg"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="@string/pomo_title"
+        app:titleTextColor="@color/light_text_primary" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- 倒计时 + 当前阶段 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/light_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        android:id="@+id/tvCountdown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="25:00"
+                        android:textSize="52sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-light"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/light_text_primary" />
+
+                    <TextView
+                        android:id="@+id/tvPhase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:textSize="13sp"
+                        android:textColor="@color/light_accent" />
+
+                    <TextView
+                        android:id="@+id/tvRoundInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:textSize="11sp"
+                        android:textColor="@color/light_text_secondary" />
+
+                    <ProgressBar
+                        android:id="@+id/progress"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_marginTop="12dp"
+                        android:max="1000"
+                        android:progress="0"
+                        android:progressTint="@color/light_accent" />
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:textSize="11sp"
+                        android:textColor="@color/light_text_secondary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 节奏预设 + 时长 + 自动衔接 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/light_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:minHeight="46dp">
+
+                        <TextView
+                            android:layout_width="46dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pomo_preset_short"
+                            android:textSize="13sp"
+                            android:textColor="@color/light_text_secondary" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPresetClassic"
+                            style="@style/EggChip"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/pomo_preset_classic" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPresetDeep"
+                            style="@style/EggChip"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/pomo_preset_deep" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPresetSprint"
+                            style="@style/EggChip"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/pomo_preset_sprint" />
+
+                        <ImageButton
+                            android:id="@+id/btnEditDurations"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_settings"
+                            android:scaleType="centerInside"
+                            android:tint="@color/light_icon"
+                            android:contentDescription="@string/pomo_durations" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/light_divider" />
+
+                    <LinearLayout
+                        android:id="@+id/btnDurations"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:minHeight="46dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/pomo_durations"
+                            android:textSize="13sp"
+                            android:textColor="@color/light_text_secondary" />
+
+                        <TextView
+                            android:id="@+id/tvDurations"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textColor="@color/light_text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/egg_row_arrow"
+                            android:textSize="14sp"
+                            android:textColor="@color/light_text_secondary" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/light_divider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:minHeight="46dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/pomo_auto_next"
+                            android:textSize="13sp"
+                            android:textColor="@color/light_text_secondary" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/swAutoNext"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:trackTint="@color/switch_track"
+                            app:thumbTint="@color/switch_thumb" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 开始 / 结束 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="14dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnStart"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:maxLines="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/pomo_start"
+                    android:textSize="16sp"
+                    android:backgroundTint="@color/light_accent"
+                    app:cornerRadius="25dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSkip"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:maxLines="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/pomo_skip"
+                    android:textSize="14sp"
+                    android:textColor="@color/light_accent"
+                    app:cornerRadius="25dp"
+                    app:strokeColor="@color/light_accent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnStop"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:maxLines="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/pomo_stop_all"
+                    android:textSize="14sp"
+                    android:textColor="@color/light_accent"
+                    app:cornerRadius="25dp"
+                    app:strokeColor="@color/light_accent" />
+            </LinearLayout>
+
+            <!-- 玩法说明：默认展开 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/light_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pomo_guide_title"
+                        android:textSize="15sp"
+                        android:textColor="@color/light_text_primary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="4dp"
+                        android:text="@string/pomo_guide_body"
+                        android:textSize="13sp"
+                        android:textColor="@color/light_text_secondary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

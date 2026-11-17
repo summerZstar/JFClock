@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 常用计时器的拖动手柄：按住上下拖动排序 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/light_text_secondary">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M20,9H4v2h16V9zM4,15h16v-2H4v2z" />
+</vector>

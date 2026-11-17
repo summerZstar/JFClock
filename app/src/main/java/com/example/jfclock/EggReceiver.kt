@@ -28,6 +28,11 @@ class EggReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val label = intent.getStringExtra(EXTRA_LABEL) ?: context.getString(R.string.egg_done_title)
 
+        // 蛋好即过冷水才有效，所以默认顺手把冰浴计时也排上（已在冰浴中的不覆盖）
+        if (IceStore.autoAfterEgg(context) && IceStore.runningEndAt(context) == 0L) {
+            IceStore.startNow(context)
+        }
+
         val ringIntent = Intent(context, EggRingActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(EXTRA_LABEL, label)

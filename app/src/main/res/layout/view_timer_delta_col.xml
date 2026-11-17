@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 计时器的一列档位增减：滚轮选档位，左侧减、右侧加，可连点累加。
+     由 TimerActivity inflate 进 rowDeltaCols，layout_weight 让三列均分屏宽。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStepMinus"
+        style="@style/TimerStepButton"
+        android:text="@string/timer_step_minus"
+        android:contentDescription="@string/timer_step_minus_desc" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <com.example.jfclock.WheelPicker
+            android:id="@+id/pickerDeltaStep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:wheelItemTextSize="15sp"
+            app:wheelMaxValue="4"
+            app:wheelMinValue="0"
+            app:wheelVisibleCount="3"
+            app:wheelWrapSelectorWheel="true" />
+
+        <TextView
+            android:id="@+id/tvDeltaUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:maxLines="1"
+            android:textSize="11sp"
+            android:textColor="@color/light_text_secondary" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStepPlus"
+        style="@style/TimerStepButton"
+        android:text="@string/timer_step_plus"
+        android:contentDescription="@string/timer_step_plus_desc" />
+</LinearLayout>

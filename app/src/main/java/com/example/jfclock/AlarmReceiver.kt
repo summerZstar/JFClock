@@ -33,8 +33,9 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        val id = intent.getLongExtra("alarmId", -1)
+        val id = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1)
         if (id == -1L) return
+        val fromSnooze = intent.getBooleanExtra(AlarmScheduler.EXTRA_FROM_SNOOZE, false)
 
         val app = context.applicationContext as JFClockApp
         val pendingResult = goAsync()
@@ -46,14 +47,17 @@ class AlarmReceiver : BroadcastReceiver() {
             }
             val ringIntent = Intent(context, AlarmRingActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                putExtra("alarmId", id)
+                putExtra(AlarmScheduler.EXTRA_ALARM_ID, id)
             }
             val serviceOk = RingService.start(
                 context,
                 RingService.KIND_ALARM,
                 id = id,
+                label = alarm?.label.orEmpty(),
+                note = alarm?.specialNote.orEmpty(),
                 sound = alarm?.sound != false,
-                vibrate = alarm?.vibrate != false
+                vibrate = alarm?.vibrate != false,
+                intense = alarm?.intenseAlert == true
             )
             if (!serviceOk) {
                 try {
@@ -61,14 +65,23 @@ class AlarmReceiver : BroadcastReceiver() {
                 } catch (_: Exception) {
                 }
             }
-            postNotification(context, id, ringIntent, audible = !serviceOk)
+            postNotification(context, id, ringIntent, alarm, audible = !serviceOk)
 
             try {
-                if (alarm != null && alarm.enabled) {
-                    if (alarm.repeatType == -1) {
-                        app.repository.update(alarm.copy(enabled = false))
+                if (alarm != null) {
+                    var latest = alarm
+                    // 无论正常到点还是延后再响，这一次响过就不再有「待延后」状态
+                    if (latest.snoozeUntil != 0L) {
+                        latest = latest.copy(snoozeUntil = 0L)
+                        app.repository.update(latest)
                     }
-                    AlarmScheduler.schedule(context.applicationContext, alarm)
+                    if (latest.enabled && !fromSnooze) {
+                        if (latest.repeatType == Alarm.REPEAT_ONCE) {
+                            latest = latest.copy(enabled = false)
+                            app.repository.update(latest)
+                        }
+                        AlarmScheduler.schedule(context.applicationContext, latest)
+                    }
                 }
             } finally {
                 pendingResult.finish()
@@ -80,6 +93,7 @@ class AlarmReceiver : BroadcastReceiver() {
         context: Context,
         id: Long,
         ringIntent: Intent,
+        alarm: Alarm?,
         audible: Boolean
     ) {
         val nm = context.getSystemService(NotificationManager::class.java)
@@ -95,10 +109,16 @@ class AlarmReceiver : BroadcastReceiver() {
             ringIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        // 特殊提醒文案优先做标题，让通知栏一眼看到要做什么
+        val note = alarm?.specialNote.orEmpty()
+        val title = note.ifBlank { context.getString(R.string.ring_alarm_title) }
         val notification = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_clock)
-            .setContentTitle("闹钟")
-            .setContentText("闹钟时间到了")
+            .setContentTitle(title)
+            .setContentText(
+                alarm?.label?.takeIf { it.isNotBlank() }
+                    ?: context.getString(R.string.ring_alarm_text)
+            )
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(fullScreenPi, true)

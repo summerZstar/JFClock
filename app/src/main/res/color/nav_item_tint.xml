@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 首页底部 tab 的图标/文字着色：选中蓝，未选中次要灰 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/light_accent" android:state_checked="true" />
+    <item android:color="@color/light_text_secondary" />
+</selector>

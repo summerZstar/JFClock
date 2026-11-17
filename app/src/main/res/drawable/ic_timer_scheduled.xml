@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 预设类型标识：定时开始（铃铛） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/light_accent">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12,2C10.9,2 10,2.9 10,4V4.3C7.1,5.1 5,7.6 5,10.5V15L3,17V18H21V17L19,15V10.5C19,7.6 16.9,5.1 14,4.3V4C14,2.9 13.1,2 12,2ZM12,22C13.7,22 15,20.7 15,19H9C9,20.7 10.3,22 12,22Z" />
+</vector>

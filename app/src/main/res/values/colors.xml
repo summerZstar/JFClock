@@ -15,4 +15,7 @@
     <color name="coloros_ring_text">#FFFFFF</color>
     <color name="coloros_ring_text_secondary">#B8BDC7</color>
     <color name="coloros_ring_stroke">#4A4F58</color>
+
+    <!-- 应用图标底色：不随深浅色变化，避免桌面图标跟着主题跳色 -->
+    <color name="coloros_accent">#1868F0</color>
 </resources>

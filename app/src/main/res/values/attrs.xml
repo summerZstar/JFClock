@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 主题属性：浅色/深色由 values 与 values-night 各给一套值 -->
     <attr name="appBg" format="color" />
     <attr name="appCard" format="color" />
     <attr name="appTextPrimary" format="color" />
@@ -8,4 +9,18 @@
     <attr name="appAccent" format="color" />
     <attr name="appSwitchOff" format="color" />
     <attr name="appIconTint" format="color" />
+
+    <!-- 自绘滚轮 [WheelPicker]：属性名带 wheel 前缀，避免与库里的同名 attr 冲突 -->
+    <declare-styleable name="WheelPicker">
+        <attr name="wheelMinValue" format="integer" />
+        <attr name="wheelMaxValue" format="integer" />
+        <attr name="wheelValue" format="integer" />
+        <attr name="wheelWrapSelectorWheel" format="boolean" />
+        <attr name="wheelVisibleCount" format="integer" />
+        <attr name="wheelItemTextSize" format="dimension" />
+        <attr name="wheelItemHeight" format="dimension" />
+        <attr name="wheelTextColor" format="color" />
+        <attr name="wheelSelectedTextColor" format="color" />
+        <attr name="wheelSelectorColor" format="color" />
+    </declare-styleable>
 </resources>

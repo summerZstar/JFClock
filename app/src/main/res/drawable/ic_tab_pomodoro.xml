@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 底部 tab 图标：番茄钟（果实 + 蒂叶） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12,7.6C8.5,7.6 5.6,10.4 5.6,14C5.6,17.6 8.5,20.5 12,20.5C15.5,20.5 18.4,17.6 18.4,14C18.4,10.4 15.5,7.6 12,7.6ZM12,18.7C9.4,18.7 7.4,16.5 7.4,14C7.4,11.5 9.4,9.3 12,9.3C14.6,9.3 16.6,11.5 16.6,14C16.6,16.5 14.6,18.7 12,18.7Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12,7.2L9.4,4.2L12,5L14.6,4.2Z" />
+</vector>

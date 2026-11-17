@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">JFClock</string>
     <string name="title_alarms">闹钟</string>
+    <string name="tab_egg">煮蛋</string>
+    <string name="tab_pomodoro">番茄</string>
+    <!-- 首页标题行下方的「提醒」：所有闹钟里最近的一次触发时刻 -->
+    <string name="home_reminder_fmt">提醒 · %1$s</string>
     <string name="empty_alarms">还没有闹钟，点击右下角添加</string>
     <string name="action_save">保存</string>
     <string name="action_delete">删除</string>
@@ -17,11 +21,13 @@
     <string name="snooze_label">稍后提醒</string>
     <string name="snooze_fmt">稍后提醒 %1$d 分钟</string>
     <string name="unit_minutes">分钟</string>
+    <string name="unit_rounds">轮</string>
     <string name="unit_seconds">秒</string>
     <string name="skip_dialog_title">要关闭此重复闹钟吗？</string>
     <string name="skip_once_fmt">仅%1$s关闭一次</string>
     <string name="skip_disable">关闭此重复闹钟</string>
     <string name="action_cancel">取消</string>
+    <string name="action_ok">确定</string>
     <string name="egg_timer">煮蛋计时</string>
     <string name="egg_soft">溏心</string>
     <string name="egg_medium">半熟</string>
@@ -31,7 +37,7 @@
     <string name="egg_size_m">M蛋</string>
     <string name="egg_size_l">L蛋</string>
     <string name="egg_size_xl">XL蛋</string>
-    <string name="egg_size_detail">M蛋 56–63g · L蛋 64–70g · XL蛋 71–80g</string>
+    <string name="egg_size_detail">M蛋 48–58g · L蛋 58–68g · XL蛋 68g以上</string>
     <string name="egg_fridge">冷藏蛋（冰箱取出，自动加 30 秒）</string>
     <string name="egg_start">开始</string>
     <string name="egg_stop">停止</string>
@@ -53,10 +59,28 @@
     <string name="egg_finished">已响铃，点「停止」可重新计时</string>
     <string name="egg_calc_custom">自定义 %1$s</string>
     <string name="egg_guide_title">怎么煮更稳（沸水下锅）</string>
+    <string name="egg_key_title">关键要点</string>
+    <string name="egg_key_boil">• 沸水下锅：水完全烧开后再放蛋，下锅转中火保持微沸，从这时开始计时</string>
+    <string name="egg_key_ice">• 冰浴 3–5 分钟：到点立刻捞进冷水或冰水，止住余温继续加热，也更易剥壳</string>
     <string name="egg_guide_expand">展开</string>
     <string name="egg_guide_collapse">收起</string>
     <string name="egg_guide_body">1. 水量要能没过鸡蛋，完全烧开后下锅\n2. 用勺子贴着水面轻放，减少裂壳\n3. 下蛋后转中火，全程保持微沸并开始计时\n4. 到点立刻捞出，冰水浴 3–5 分钟\n\n流心参考（室温蛋）：M蛋 6:00 · L蛋 6:30 · XL蛋 7:00；冷藏蛋各加 30 秒。\n\n锅具、火力、海拔都有差异，第一次建议试煮一个后微调。切到别的 App、锁屏或清理后台后也会准点响铃。</string>
-    <string name="next_ring_fmt">距离下次响铃还有 %1$s</string>
+    <!-- 冰浴计时（煮蛋页内，默认 4 分钟） -->
+    <string name="ice_title">冰浴计时</string>
+    <string name="ice_hint">过冷水 3–5 分钟，止住余温更好剥壳</string>
+    <string name="ice_minus">−</string>
+    <string name="ice_plus">+</string>
+    <string name="ice_auto_row">蛋好自动开始冰浴</string>
+    <string name="ice_start">开始冰浴</string>
+    <string name="ice_stop">取消冰浴</string>
+    <string name="ice_running_fmt">冰浴中 · 还剩 %1$s</string>
+    <string name="ice_idle_fmt">设定 %1$s，捞出即可点「开始冰浴」</string>
+    <string name="ice_done_title">冰浴时间到</string>
+    <string name="ice_done_tip">可以出水擦干了：\n冰浴到位，蛋白就停止继续受热</string>
+    <string name="ice_extend_1min">再来 1 分钟</string>
+    <string name="ice_open">查看冰浴提醒</string>
+    <string name="ice_channel_name">冰浴计时</string>
+    <string name="ice_channel_audible">冰浴响铃（兜底）</string>
     <string name="perm_guide_title">开启权限，闹钟才够准</string>
     <string name="perm_guide_msg">为保证闹钟在锁屏和后台也能准点响铃，需要开启：\n\n1. 通知权限 + 全屏提醒\n2. 闹钟和提醒（精确闹钟）\n3. 后台弹出界面 / 显示在其他应用上层\n4. 自启动 / 允许后台运行（OPPO 手机必开）\n\n点击「去设置」打开应用内权限页，可逐项检查并直达系统设置。</string>
     <string name="perm_guide_go">去设置</string>
@@ -69,15 +93,31 @@
     <string name="perm_exact_desc">允许系统准点唤醒，未开启时省电模式下可能延迟几分钟</string>
     <string name="perm_fs_title">全屏提醒</string>
     <string name="perm_fs_desc">Android 14+ 需单独允许，否则到点只有通知、不弹响铃界面。未开启时本项会显示「去开启」</string>
-    <string name="perm_overlay_title">后台弹出界面 / 显示在其他应用上层</string>
-    <string name="perm_overlay_desc">OPPO/一加/realme 常靠这项才能在锁屏和其他应用之上弹出响铃界面；开启后到点会直接弹屏</string>
+    <string name="perm_overlay_title">悬浮窗（显示在其他应用上层）</string>
+    <string name="perm_overlay_desc">系统悬浮窗权限，部分机型锁屏/后台弹响铃界面靠它；点击直达悬浮窗设置</string>
+    <string name="perm_popup_title">后台弹出界面</string>
+    <string name="perm_popup_desc">锁屏或切到其他 App 后到点直接弹出响铃界面靠这项。位置：应用信息 → 其他权限 → 特殊权限 → 后台弹出界面，设为允许</string>
+    <string name="perm_battery_title">电池优化白名单</string>
+    <string name="perm_battery_desc">关闭电池优化（允许后台运行）：清理后台后闹钟仍能准点触发的关键设置</string>
     <string name="perm_dnd_title">勿扰模式下响铃</string>
     <string name="perm_dnd_desc">可选。开启后勿扰模式仍能正常响铃</string>
     <string name="perm_autostart_title">自启动 / 后台运行</string>
-    <string name="perm_autostart_desc">OPPO/一加/realme 必开：否则清理后台后闹钟广播收不到、到点不响。请允许「自启动」并在电池设置中允许「后台活动」</string>
+    <string name="perm_autostart_desc">OPPO/一加/realme 必开：否则清理后台后闹钟广播收不到、到点不响。入口：设置 → 应用 → 自启动，允许 JFClock（老版本 ColorOS 在安全中心里）</string>
     <string name="perm_status_granted">已开启</string>
     <string name="perm_status_denied">去开启</string>
     <string name="perm_status_manual">手动设置</string>
+    <string name="perm_workday_title">节假日数据（工作日闹钟）</string>
+    <string name="perm_workday_default_source">holiday-cn 公共数据源</string>
+    <string name="perm_workday_ready_fmt">上次同步 %1$s\n来源 %2$s · 点击立即刷新，长按可换数据地址</string>
+    <string name="perm_workday_missing">尚未同步法定节假日数据，「工作日」闹钟暂时按周一至周五判定。点击立即同步</string>
+    <string name="perm_workday_synced">已同步</string>
+    <string name="perm_workday_sync_now">去同步</string>
+    <string name="perm_workday_syncing">正在同步节假日数据…</string>
+    <string name="perm_workday_sync_ok">%1$s 年数据已更新，工作日闹钟已按新安排重排</string>
+    <string name="perm_workday_sync_fail">同步失败：请检查网络，或长按本项自定义数据地址</string>
+    <string name="perm_workday_url_title">自定义数据地址</string>
+    <string name="perm_workday_url_hint">https://…/{year}.json</string>
+    <string name="perm_workday_url_desc">留空则用默认数据源。地址里的 {year} 会替换成年份，返回需为 holiday-cn 格式的 JSON。</string>
     <string name="perm_page_unavailable">未找到对应系统设置页，请手动前往：设置 → 应用 → JFClock</string>
     <string name="perm_all_ok">所需权限均已开启，闹钟可在后台/锁屏正常响铃</string>
     <string name="perm_warn">⚠ 部分权限未开启，后台/锁屏可能不响铃 · 点击处理</string>
@@ -86,4 +126,202 @@
     <string name="ring_service_title">正在响铃</string>
     <string name="ring_open">打开闹钟</string>
     <string name="egg_open_ring">查看煮蛋提醒</string>
+
+    <!-- 下次响铃提示 -->
+    <string name="next_ring_tip">距离下次响铃还有 %1$s\n%2$s</string>
+    <string name="alarm_saved">闹钟已保存</string>
+    <string name="alarm_snooze_line_fmt">延后再响 · 还有 %1$s（%2$s）</string>
+    <string name="alarm_snooze_toast_fmt">已稍后提醒，%1$s后再响</string>
+    <string name="alarm_skip_line_fmt">已跳过%1$s这一次 · 下次%2$s响</string>
+
+    <!-- 每个闹钟卡片第二行：重复方式 +（启用时）下次响铃，同一行双色显示 -->
+    <string name="alarm_next_imminent">即将响铃</string>
+    <string name="alarm_next_in_fmt">还有%1$s后响</string>
+    <string name="alarm_next_tomorrow">明天响</string>
+    <string name="alarm_next_at_fmt">%1$s响</string>
+    <string name="alarm_next_today_fmt">今天 %1$s</string>
+    <string name="alarm_next_tomorrow_fmt">明天 %1$s</string>
+
+    <!-- 计时器：定时开始 -->
+    <string name="timer_scheduled_title">定时开始</string>
+    <string name="timer_scheduled_off_summary">点开始立即倒数</string>
+    <string name="timer_scheduled_pick">选择开始时间</string>
+    <string name="timer_scheduled_summary_fmt">%1$s 开始 · %2$s 响铃</string>
+    <string name="timer_state_scheduled">已定时，等待开始</string>
+    <string name="timer_cancel_scheduled">取消定时</string>
+    <string name="timer_scheduled_toast_fmt">已定时：%1$s 开始倒计时，%2$s 响铃</string>
+    <string name="perm_lockscreen_title">锁屏显示</string>
+    <string name="perm_lockscreen_desc">锁屏时只响不弹界面就开这项：允许响铃页面在锁屏上显示（在弹出的页面找到「锁屏显示」并允许）</string>
+
+    <!-- 计时器：常用计时器预设 -->
+    <string name="timer_preset_section">常用计时器</string>
+    <string name="timer_preset_drag_hint">点一下套用 · 长按编辑 · 按住右侧手柄可上下排序</string>
+    <string name="timer_preset_drag_desc">拖动排序</string>
+    <string name="timer_preset_add">添加</string>
+    <string name="timer_preset_new">新建计时器</string>
+    <string name="timer_preset_edit">编辑计时器</string>
+    <string name="timer_preset_save">保存</string>
+    <string name="timer_preset_delete">删除</string>
+    <string name="timer_preset_name_hint">名称（如：刷牙）</string>
+    <string name="timer_preset_need_name">请填写名称</string>
+    <string name="timer_preset_need_time">请选择时长</string>
+    <string name="timer_preset_busy">已有计时在进行，先停止再开始新的</string>
+    <string name="timer_preset_applied_fmt">已填入「%1$s」%2$s，点「开始」启动</string>
+    <string name="timer_preset_applied_scheduled_fmt">已填入「%1$s」%2$s · %3$s开始，点「开始」启动</string>
+    <string name="timer_preset_duration">时长</string>
+    <string name="timer_preset_scheduled_off_hint">关闭：随时点开始就倒计时</string>
+    <string name="timer_preset_scheduled_on_hint">打开：到设定时刻才开始</string>
+    <string name="timer_preset_scheduled_fmt">%1$s 开始</string>
+    <string name="timer_preset_type_scheduled">定时开始</string>
+    <string name="timer_preset_type_countdown">手动倒计时</string>
+    <string name="timer_preset_scheduled_need_name">定时开始的预设请先填名称</string>
+    <string name="timer_preset_default_brush">刷牙</string>
+    <string name="timer_preset_default_egg">蒸蛋</string>
+    <string name="timer_preset_default_nap">午睡</string>
+    <string name="timer_preset_default_generic">计时</string>
+
+    <!-- 计时器：进行中的常驻倒计时通知 -->
+    <string name="timer_notif_channel">计时进行中</string>
+    <string name="timer_notif_scheduled_fmt">%1$s 开始倒计时</string>
+    <string name="timer_notif_end_at_fmt">预计 %1$s 响铃</string>
+    <string name="timer_notif_paused_fmt">已暂停 · 剩余 %1$s</string>
+
+    <!-- 重复方式 -->
+    <string name="repeat_row_label">重复</string>
+    <string name="repeat_custom">自定义</string>
+    <string name="repeat_workday">工作日（法定节假日休）</string>
+    <string name="repeat_monthly">每月几号</string>
+    <string name="repeat_yearly">每年几月几日</string>
+    <string name="repeat_anchor_label">起始日期</string>
+    <string name="repeat_anchor_hint_once_fmt">只响一次：%1$s</string>
+    <string name="repeat_anchor_hint_interval">从这个日期开始，每隔 N 天响一次</string>
+    <string name="repeat_anchor_hint_monthly">每月 %1$d 号响（小月没有这天时落到当月最后一天）</string>
+    <string name="repeat_anchor_hint_yearly">每年 %1$d 月 %2$d 日响</string>
+    <string name="repeat_custom_need_day">请至少选择一天</string>
+    <string name="repeat_custom_hint">选中的星期各响一次，不受法定节假日安排影响</string>
+    <string-array name="weekday_short">
+        <item>一</item>
+        <item>二</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
+        <item>日</item>
+    </string-array>
+    <string name="repeat_interval_prefix">每</string>
+    <string name="repeat_interval_suffix">天</string>
+    <string name="repeat_interval_minus">−</string>
+    <string name="repeat_interval_plus">+</string>
+
+    <!-- 工作日 / 节假日数据 -->
+    <string name="workday_data_ready">已同步节假日安排（上次同步 %1$s）</string>
+    <string name="workday_data_missing">还没拿到节假日数据，暂时按周一至周五判定；可在设置页「节假日数据」同步</string>
+
+    <!-- 增强提醒 / 特殊提醒 -->
+    <string name="alarm_intense_title">增强提醒</string>
+    <string name="alarm_intense_desc">铃声由轻到响渐强、震动加长，响铃界面每分钟重新弹出，关闭需长按。适合睡得很沉或重要事项</string>
+    <string name="alarm_note_title">特殊提醒</string>
+    <string name="alarm_note_hint">到点要做的事（如「吃降压药」「接孩子」）</string>
+    <string name="ring_dismiss_hold">长按关闭</string>
+    <string name="ring_alarm_title">闹钟</string>
+    <string name="ring_alarm_text">该起床了</string>
+
+    <!-- 精确闹钟权限引导 -->
+    <string name="need_exact_alarm_title">需要「闹钟和提醒」权限</string>
+    <string name="need_exact_alarm_msg">系统未授予精确闹钟权限，省电模式下可能延迟几分钟才响。建议去设置里允许后再使用闹钟。</string>
+    <string name="go_grant">去开启</string>
+    <string name="save_anyway">先保存</string>
+
+    <!-- 番茄时钟 -->
+    <string name="pomo_title">番茄时钟</string>
+    <string name="pomo_entry">番茄钟</string>
+    <string name="pomo_work">专注</string>
+    <string name="pomo_short_break">短休息</string>
+    <string name="pomo_long_break">长休息</string>
+    <string name="pomo_start">开始专注</string>
+    <string name="pomo_pause">暂停</string>
+    <string name="pomo_resume">继续</string>
+    <string name="pomo_next_phase">开始下一阶段</string>
+    <string name="pomo_skip">跳过本阶段</string>
+    <string name="pomo_stop_all">结束本轮</string>
+    <string name="pomo_open">打开番茄钟</string>
+    <string name="pomo_open_ring">查看番茄提醒</string>
+    <string name="pomo_auto_next">阶段自动衔接</string>
+    <string name="pomo_durations">时长设置</string>
+    <string name="pomo_rounds_label">几轮后长休息</string>
+    <string name="pomo_preset_short">节奏</string>
+    <string name="pomo_preset_classic">经典</string>
+    <string name="pomo_preset_deep">深度</string>
+    <string name="pomo_preset_sprint">短冲</string>
+    <string name="pomo_channel_name">番茄时钟</string>
+    <string name="pomo_channel_audible">番茄响铃（兜底）</string>
+    <string name="pomo_phase_fmt">%1$s · %2$d 分钟</string>
+    <string name="pomo_durations_fmt">专注 %1$d · 短休 %2$d · 长休 %3$d · 每 %4$d 轮</string>
+    <string name="pomo_round_info_fmt">第 %1$d / %2$d 个番茄 · 已完成 %3$d 个</string>
+    <string name="pomo_state_running">计时中 · 切到别的 App 或锁屏也会准点提醒</string>
+    <string name="pomo_state_paused">已暂停，点「继续」按剩余时间接着走</string>
+    <string name="pomo_state_wait">阶段已到，点「开始下一阶段」继续</string>
+    <string name="pomo_state_idle">从 25 分钟专注开始，第一个番茄</string>
+    <string name="pomo_ring_label_fmt">%1$d 分钟%2$s结束</string>
+    <string name="pomo_ring_next_work">开始第 %1$d 个番茄</string>
+    <string name="pomo_ring_next_break_fmt">该休息 %1$d 分钟（%2$s）</string>
+    <string name="pomo_next_running_fmt">下一阶段：%1$s · 剩余 %2$s</string>
+    <string name="pomo_next_waiting">未开启自动衔接，回来点「开始下一阶段」</string>
+    <string name="pomo_next_stopped">本轮已结束</string>
+    <string name="pomo_guide_title">怎么用</string>
+    <string name="pomo_guide_body">一个番茄 = 一段专注 + 一次短休息；攒满设定的轮数后换成一次长休息。\n专注期间尽量不被打断，被打断了就按「跳过本阶段」重新开始。\n排程走系统闹钟，切到别的 App、锁屏甚至清理后台都会准点提醒；长休息到了会写进通知标题，方便一眼看到。</string>
+
+    <!-- 计时器（倒计时） -->
+    <string name="unit_hour">时</string>
+    <string name="unit_minute">分</string>
+    <string name="unit_second">秒</string>
+    <string name="timer_entry">计时器</string>
+    <string name="timer_title">计时器</string>
+    <string name="timer_quick_add">滚到档位，点左减右加（可连点累加）</string>
+    <string name="timer_step_minus">−</string>
+    <string name="timer_step_plus">+</string>
+    <string name="timer_step_minus_desc">减去所选档位</string>
+    <string name="timer_step_plus_desc">加上所选档位</string>
+    <string name="timer_step_hours">小时档</string>
+    <string name="timer_step_minutes">分钟档</string>
+    <string name="timer_step_seconds">秒钟档</string>
+    <string name="timer_name_hint">名称（可选，如「泡茶」）</string>
+    <string name="timer_start">开始</string>
+    <string name="timer_pause">暂停</string>
+    <string name="timer_resume">继续</string>
+    <string name="timer_reset">重置</string>
+    <string name="timer_state_idle">拨好时分秒后点开始，到点响铃</string>
+    <string name="timer_state_running">计时中 · 切到别的 App 或锁屏也会准点提醒</string>
+    <string name="timer_state_paused">已暂停，点「继续」按剩余时间接着走</string>
+    <string name="timer_end_at_fmt">预计 %1$s 结束</string>
+    <string name="timer_need_time">请先把时间拨到 1 秒以上</string>
+    <string name="timer_open">查看计时器</string>
+    <string name="timer_ring_title">计时结束</string>
+    <string name="timer_ring_text_fmt">%1$s计时结束</string>
+    <string name="timer_ring_again">再来一次</string>
+    <string name="timer_ring_stop">停止</string>
+    <string name="timer_ring_repeat_fmt">「再来一次」按 %1$s 重新倒数；「停止」结束本次计时</string>
+    <string name="timer_ring_stop_only">点「停止」结束本次计时</string>
+    <string name="timer_again_fmt">已重新开始计时：%1$s</string>
+    <string name="timer_channel_name">计时器</string>
+    <string name="timer_channel_audible">计时响铃（兜底）</string>
+    <string name="timer_guide_body">时/分/秒三列滚轮自己拨，也可以在下方的「小时档 / 分钟档 / 秒钟档」三个滚轮滚到想加的档位，点滚轮左边的「−」或右边的「+」一键增减，可以连点累加；需要归零时点底部「开始」左边的「重置」。\n名称会显示在响铃界面和通知上。常用的时长可以长按保存成「常用计时器」，条目左侧的秒表图标表示手动点开始才倒数，铃铛图标表示「定时开始」——到设定的时刻自己开始倒数。\n开始后可以退出 App，到点由系统闹钟唤醒，全屏响铃并点亮屏幕；「再来一次」按原时长重新倒数。</string>
+
+    <!-- 秒表 -->
+    <string name="sw_entry">秒表</string>
+    <string name="sw_title">秒表</string>
+    <string name="sw_start">开始</string>
+    <string name="sw_pause">暂停</string>
+    <string name="sw_resume">继续</string>
+    <string name="sw_lap">计次</string>
+    <string name="sw_reset">清零</string>
+    <string name="sw_lap_count">次数</string>
+    <string name="sw_lap_split">单圈</string>
+    <string name="sw_lap_total">累计</string>
+    <string name="sw_lap_fmt">第 %1$d 次</string>
+    <string name="sw_lap_best">最快</string>
+    <string name="sw_lap_worst">最慢</string>
+    <string name="sw_state_running">计时中</string>
+    <string name="sw_state_paused">已暂停</string>
+    <string name="sw_state_idle">点「开始」计时，随时「计次」留圈速</string>
 </resources>

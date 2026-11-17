@@ -41,6 +41,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- 特殊提醒：响铃时大字显示「吃什么药 / 接孩子」这类待办 -->
+    <TextView
+        android:id="@+id/tvNote"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="@color/light_accent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -88,6 +88,63 @@
         <item name="strokeWidth">1dp</item>
     </style>
 
+    <!-- 计时器的固定加减胶囊：不选中、紧凑、可横滑 -->
+    <style name="TimerDeltaChip" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">34dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">6dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/light_accent</item>
+        <item name="cornerRadius">17dp</item>
+        <item name="strokeColor">@color/light_accent</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- 计时器档位增减的小圆钮：滚轮两侧的 −/+，只放一个符号 -->
+    <style name="TimerStepButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/light_accent</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="strokeColor">@color/light_accent</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- 首页新增闹钟按钮：Material 3 的 FAB 默认是圆角方形，这里改成正圆 -->
+    <style name="FabCircle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- 自定义重复的星期圆钮：等分槽位里的 36dp 正圆，选中填蓝 -->
+    <style name="WeekdayCircle">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/bg_weekday_circle</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:textColor">@color/weekday_text</item>
+    </style>
+
     <style name="TitleText" parent="TextAppearance.Material3.HeadlineSmall">        <item name="android:textColor">@color/light_text_primary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>

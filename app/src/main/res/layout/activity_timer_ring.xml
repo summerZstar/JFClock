@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/coloros_ring_bg"
+    android:paddingStart="28dp"
+    android:paddingEnd="28dp">
+
+    <ImageView
+        android:id="@+id/ringIcon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/ic_clock"
+        android:tint="@color/light_accent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="@string/timer_ring_title"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/coloros_ring_text"
+        app:layout_constraintTop_toBottomOf="@id/ringIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/coloros_ring_text_secondary"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:lineSpacingExtra="5dp"
+        android:textSize="14sp"
+        android:textColor="@color/coloros_ring_text_secondary"
+        app:layout_constraintTop_toBottomOf="@id/tvLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="56dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStop"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="12dp"
+            android:text="@string/timer_ring_stop"
+            android:textColor="@color/coloros_ring_text"
+            app:strokeColor="@color/coloros_ring_stroke" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAgain"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="@string/timer_ring_again"
+            android:backgroundTint="@color/light_accent"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

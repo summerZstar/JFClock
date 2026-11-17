@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 11（API 30）及以下：Google 云备份（Auto Backup）要打包的数据。
+  与 res/xml/backup_rules.xml 保持一致，两个版本的数据范围对齐。
+-->
+<full-backup-content>
+    <include domain="database" path="." />
+    <include domain="sharedpref" path="." />
+    <include domain="file" path="." />
+    <include domain="external" path="." />
+</full-backup-content>

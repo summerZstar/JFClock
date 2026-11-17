@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -39,9 +38,12 @@ class EggTimerActivity : AppCompatActivity() {
     private var hardSec = 600
 
     private var doneness = 0      // 0 溏心 / 1 半熟 / 2 全熟
-    private var size = 0          // 0 M / 1 L / 2 XL
+    private var size = 1          // 0 M / 1 L / 2 XL；国内散装蛋多在 L（58–68g），默认 L
     private var fridge = false
     private var customSec = 0     // > 0 表示用自定义时长，忽略上方计算
+
+    private var iceJob: Job? = null
+    private var iceSec = IceStore.DEFAULT_SECONDS
 
     private val donenessNames by lazy {
         listOf(getString(R.string.egg_soft), getString(R.string.egg_medium), getString(R.string.egg_hard))
@@ -49,7 +51,9 @@ class EggTimerActivity : AppCompatActivity() {
 
     companion object {
         private val SIZE_NAMES = listOf("M蛋", "L蛋", "XL蛋")
-        private val SIZE_DETAIL = listOf("56–63g", "64–70g", "71–80g")
+        // 蛋重分级按国内常见标准（M 48–58g / L 58–68g / XL 68g 以上），
+        // 散装蛋一枚多在 60g 上下，落在 L
+        private val SIZE_DETAIL = listOf("48–58g", "58–68g", "68g以上")
         private val SIZE_OFFSETS = intArrayOf(0, 30, 60)
     }
 
@@ -65,7 +69,7 @@ class EggTimerActivity : AppCompatActivity() {
         mediumSec = prefs.getInt("medium_s", 480)
         hardSec = prefs.getInt("hard_s", 600)
         doneness = prefs.getInt("doneness", 0).coerceIn(0, 2)
-        size = prefs.getInt("size", 0).coerceIn(0, 2)
+        size = prefs.getInt("size", 1).coerceIn(0, 2)
         fridge = prefs.getBoolean("fridge", false)
         customSec = prefs.getInt("custom_s", 0)
 
@@ -84,7 +88,77 @@ class EggTimerActivity : AppCompatActivity() {
         binding.btnStart.setOnClickListener { startTimer() }
         binding.btnStop.setOnClickListener { stopTimer() }
 
+        setupIce()
         restoreState()
+        startIceTicker()
+    }
+
+    // ---- 冰浴计时（与煮蛋各自一套状态，煮蛋倒数时也能单独开冰浴） ----
+
+    private fun setupIce() {
+        iceSec = IceStore.seconds(this)
+        binding.swIceAuto.isChecked = IceStore.autoAfterEgg(this)
+        binding.swIceAuto.setOnCheckedChangeListener { _, checked ->
+            IceStore.setAutoAfterEgg(this, checked)
+        }
+        binding.btnIceMinus.setOnClickListener { stepIce(-IceStore.STEP_SECONDS) }
+        binding.btnIcePlus.setOnClickListener { stepIce(IceStore.STEP_SECONDS) }
+        binding.btnIceStart.setOnClickListener { startIce() }
+        binding.btnIceStop.setOnClickListener { stopIce() }
+        renderIce()
+    }
+
+    private fun stepIce(delta: Int) {
+        if (IceStore.runningEndAt(this) > 0) return
+        iceSec = (iceSec + delta).coerceIn(IceStore.MIN_SECONDS, IceStore.MAX_SECONDS)
+        IceStore.setSeconds(this, iceSec)
+        renderIce()
+    }
+
+    private fun startIce() {
+        if (IceStore.runningEndAt(this) > 0) return
+        IceStore.startNow(this, iceSec)
+        renderIce()
+    }
+
+    private fun stopIce() {
+        IceScheduler.cancel(this)
+        IceStore.clear(this)
+        renderIce()
+    }
+
+    private fun renderIce() {
+        val endAt = IceStore.runningEndAt(this)
+        if (endAt > 0) {
+            val remaining = ((endAt - System.currentTimeMillis() + 999) / 1000).coerceAtLeast(0)
+            binding.tvIceValue.text = clockOf(remaining)
+            binding.tvIceStatus.text = getString(R.string.ice_running_fmt, clockOf(remaining))
+            binding.btnIceStart.visibility = View.GONE
+            binding.btnIceStop.visibility = View.VISIBLE
+            binding.btnIceMinus.visibility = View.INVISIBLE
+            binding.btnIcePlus.visibility = View.INVISIBLE
+        } else {
+            val sec = if (IceStore.totalMs(this) > 0) (IceStore.totalMs(this) / 1000).toInt() else iceSec
+            binding.tvIceValue.text = clockOf(sec.toLong())
+            binding.tvIceStatus.text = getString(R.string.ice_idle_fmt, formatEggDuration(sec))
+            binding.btnIceStart.visibility = View.VISIBLE
+            binding.btnIceStop.visibility = View.GONE
+            binding.btnIceMinus.visibility = View.VISIBLE
+            binding.btnIcePlus.visibility = View.VISIBLE
+        }
+    }
+
+    private fun clockOf(sec: Long): String =
+        String.format(Locale.US, "%02d:%02d", sec / 60, sec % 60)
+
+    private fun startIceTicker() {
+        iceJob?.cancel()
+        iceJob = lifecycleScope.launch {
+            while (true) {
+                renderIce()
+                delay(250)
+            }
+        }
     }
 
     private fun setupChips() {
@@ -113,19 +187,19 @@ class EggTimerActivity : AppCompatActivity() {
     }
 
     private fun refreshChips() {
-        val custom = customSec > 0
-        binding.btnSoft.isChecked = !custom && doneness == 0
-        binding.btnMedium.isChecked = !custom && doneness == 1
-        binding.btnHard.isChecked = !custom && doneness == 2
-        binding.btnSizeM.isChecked = !custom && size == 0
-        binding.btnSizeL.isChecked = !custom && size == 1
-        binding.btnSizeXl.isChecked = !custom && size == 2
+        // 自定义只覆盖最终时长，不清掉已选的熟度/大小：改完时间还能看出选的是哪档
+        binding.btnSoft.isChecked = doneness == 0
+        binding.btnMedium.isChecked = doneness == 1
+        binding.btnHard.isChecked = doneness == 2
+        binding.btnSizeM.isChecked = size == 0
+        binding.btnSizeL.isChecked = size == 1
+        binding.btnSizeXl.isChecked = size == 2
         binding.tvCustomValue.text =
-            if (custom) formatEggDuration(customSec) else getString(R.string.egg_custom_off)
+            if (customSec > 0) formatEggDuration(customSec) else getString(R.string.egg_custom_off)
         binding.tvCustomValue.setTextColor(
             ContextCompat.getColor(
                 this,
-                if (custom) R.color.light_accent else R.color.light_text_primary
+                if (customSec > 0) R.color.light_accent else R.color.light_text_primary
             )
         )
     }
@@ -288,7 +362,7 @@ class EggTimerActivity : AppCompatActivity() {
             .setTitle(R.string.egg_preset_settings)
             .setView(container)
             .setPositiveButton(R.string.action_save) { _, _ ->
-                val values = rows.map { (name, pickers) ->
+                val values = rows.map { (_, pickers) ->
                     val (minPicker, secPicker) = pickers
                     minPicker.value * 60 + secPicker.value
                 }
@@ -311,26 +385,26 @@ class EggTimerActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun buildTimePickers(initialSec: Int): Pair<NumberPicker, NumberPicker> {
-        val minPicker = NumberPicker(this).apply {
-            minValue = 0; maxValue = 120; value = (initialSec / 60).coerceAtMost(120)
-            wrapSelectorWheel = true
-            descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+    private fun buildTimePickers(initialSec: Int): Pair<WheelPicker, WheelPicker> {
+        val minPicker = WheelPicker(this).apply {
+            minValue = 0; maxValue = 120
+            setTextSizeSp(20f)
+            setFormatter { String.format(Locale.US, "%02d", it) }
         }
-        val secPicker = NumberPicker(this).apply {
-            minValue = 0; maxValue = 59; value = initialSec % 60
-            wrapSelectorWheel = true
-            descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+        val secPicker = WheelPicker(this).apply {
+            minValue = 0; maxValue = 59
+            setTextSizeSp(20f)
+            setFormatter { String.format(Locale.US, "%02d", it) }
         }
-        styleNumberPicker(minPicker)
-        styleNumberPicker(secPicker)
+        minPicker.value = (initialSec / 60).coerceAtMost(120)
+        secPicker.value = initialSec % 60
         return minPicker to secPicker
     }
 
     /** 「名称 + 分滚轮 + 秒滚轮」一行；name 传 null 时只显示滚轮。 */
     private fun wrapPickers(
-        minPicker: NumberPicker,
-        secPicker: NumberPicker,
+        minPicker: WheelPicker,
+        secPicker: WheelPicker,
         name: String? = null
     ): LinearLayout {
         val textColor = ContextCompat.getColor(this, R.color.light_text_primary)
@@ -365,6 +439,8 @@ class EggTimerActivity : AppCompatActivity() {
         // 只停止界面刷新；AlarmManager 的排程继续生效
         job?.cancel()
         job = null
+        iceJob?.cancel()
+        iceJob = null
         super.onDestroy()
     }
 }

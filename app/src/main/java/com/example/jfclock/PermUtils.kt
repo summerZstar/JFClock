@@ -47,6 +47,17 @@ object PermUtils {
         return nm.isNotificationPolicyAccessGranted
     }
 
+    /** 是否已加入电池优化白名单（ColorOS 清理后台后仍能触发闹钟的关键设置）。 */
+    fun isIgnoringBatteryOptimizations(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
+        return try {
+            val pm = context.getSystemService(android.os.PowerManager::class.java)
+            pm?.isIgnoringBatteryOptimizations(context.packageName) ?: false
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     /** 后台/锁屏响铃的关键权限是否齐备（不含可选的勿扰与自启动）。 */
     fun allKeyPermsGranted(context: Context): Boolean =
         isNotificationEnabled(context) &&
@@ -124,20 +135,28 @@ object PermUtils {
         ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
-    /** ColorOS「后台弹出界面」页候选组件（无公开 API，逐个尝试）。 */
-    fun oppoBackgroundPopupIntents(context: Context): List<Intent> = listOf(
+    /**
+     * ColorOS 每应用「特殊应用权限」页候选（含悬浮窗/后台弹出界面/发送全屏通知等，
+     * 见 设置 → 应用 → 特殊应用权限）。无公开 API，逐个尝试。
+     * 注意：这里【不含】兜底页——兜底由设置页统一处理（退到应用详情页，
+     * 「其他权限 → 特殊权限」就在应用信息里）。
+     * 「锁屏显示」「后台弹出界面」两行共用这条链。
+     */
+    fun oppoPermissionDetailsIntents(context: Context): List<Intent> = listOf(
         Intent().setComponent(
             ComponentName(
                 "com.coloros.safecenter",
-                "com.coloros.safecenter.permission.startup.floatwindow.FloatWindowListActivity"
+                "com.coloros.safecenter.permission.singlepage.PermissionDetailsActivity"
             )
-        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtra("package_name", context.packageName),
         Intent().setComponent(
             ComponentName(
                 "com.oplus.safecenter",
-                "com.oplus.safecenter.permissionview.OplusPermissionListActivity"
+                "com.oplus.safecenter.permission.singlepage.PermissionDetailsActivity"
             )
         ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtra("package_name", context.packageName)
     )
 
     fun exactAlarmSettingsIntent(context: Context): Intent? {
@@ -151,8 +170,27 @@ object PermUtils {
         Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-    /** ColorOS 自启动管理页候选组件（无公开 API，逐个尝试）。 */
+    /** 电池优化白名单：先尝试直接弹授权对话框，失败退到系统白名单列表页。 */
+    fun batteryOptimizationIntents(context: Context): List<Intent> {
+        val direct = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+            .setData(Uri.parse("package:${context.packageName}"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val listPage = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return listOf(direct, listPage)
+    }
+
+    /**
+     * ColorOS 自启动管理页候选（无公开 API，逐个尝试；ColorOS 12+ 多在 oplus.battery/safecenter）。
+     * 不含兜底页——失败时由 [settingsApplicationsIntents] 退到「设置 → 应用」。
+     */
     fun oppoAutoStartIntents(context: Context): List<Intent> = listOf(
+        Intent().setComponent(ComponentName("com.oplus.battery",
+            "com.oplus.battery.startup.startup.StartupAppListActivity"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        Intent().setComponent(ComponentName("com.oplus.safecenter",
+            "com.oplus.safecenter.startupapp.StartupAppListActivity"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         Intent().setComponent(ComponentName("com.coloros.safecenter",
             "com.coloros.safecenter.startupapp.StartupAppListActivity"))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
@@ -161,7 +199,20 @@ object PermUtils {
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         Intent().setComponent(ComponentName("com.oppo.safe",
             "com.oppo.safe.permission.startup.StartupAppListActivity"))
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-        appDetailsIntent(context).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     )
+
+    /**
+     * 「设置 → 应用」页（自启动就挂在这一级下面）。
+     *
+     * 不能用 ACTION_MANAGE_APPLICATIONS_SETTINGS：那是应用列表，比「应用」页低一层，
+     * 从那里根本走不到自启动。私有组件试不通就停在设置首页，让用户自己往下点。
+     */
+    fun settingsApplicationsIntents(): List<Intent> = listOf(
+        Intent().setComponent(ComponentName("com.android.settings",
+            "com.android.settings.Settings\$ApplicationsSettingsActivity")),
+        Intent().setComponent(ComponentName("com.oplus.settings",
+            "com.oplus.settings.Settings\$ApplicationsSettingsActivity")),
+        Intent(Settings.ACTION_SETTINGS)
+    ).map { it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
 }

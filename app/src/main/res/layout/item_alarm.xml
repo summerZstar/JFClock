@@ -37,6 +37,8 @@
                 android:textStyle="bold"
                 android:textColor="@color/light_text_primary" />
 
+            <!-- 第二行：重复方式 +（启用时）下次响铃，同一行两块颜色；
+                 「下次」部分每分钟才重排一次，不参与逐秒刷新 -->
             <TextView
                 android:id="@+id/descText"
                 android:layout_width="wrap_content"
@@ -45,6 +47,16 @@
                 android:text="每天"
                 android:textSize="14sp"
                 android:textColor="@color/light_text_secondary" />
+
+            <!-- 「稍后提醒」/「已跳过」：长文案单独一行，延后再响时说明还剩多久 -->
+            <TextView
+                android:id="@+id/snoozeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="12sp"
+                android:textColor="@color/light_accent"
+                android:visibility="gone" />
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
